@@ -6,6 +6,7 @@
 #include "Helper.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "driver/temperature_sensor.h"
 
 #include <iomanip>
 #include <sstream>
@@ -551,11 +552,46 @@ string toLower(string in)
 
 
 // CPU Temp
+#ifdef CONFIG_IDF_TARGET_ESP32
 extern "C" uint8_t temprature_sens_read();
+uint8_t temprature_sens_read();
+
 float temperatureRead()
 {
     return (temprature_sens_read() - 32) / 1.8;
 }
+#elif SOC_TEMP_SENSOR_SUPPORTED
+static temperature_sensor_handle_t temp_sensor = NULL;
+
+static bool temperatureReadInit()
+{
+    static volatile bool initialized = false;
+    if(!initialized){
+        initialized = true;
+        //Install temperature sensor, expected temp ranger range: 10~50 ℃
+        temperature_sensor_config_t temp_sensor_config = TEMPERATURE_SENSOR_CONFIG_DEFAULT(10, 50);
+        if(temperature_sensor_install(&temp_sensor_config, &temp_sensor) != ESP_OK){
+            initialized = false;
+            temp_sensor = NULL;
+        }
+        else if(temperature_sensor_enable(temp_sensor) != ESP_OK){
+            temperature_sensor_uninstall(temp_sensor);
+            initialized = false;
+            temp_sensor = NULL;
+        }
+    }
+    return initialized;
+}
+
+float temperatureRead()
+{
+    float result = NAN;
+    if(temperatureReadInit()){
+        temperature_sensor_get_celsius(temp_sensor, &result);
+    }
+    return result;
+}
+#endif
 
 
 time_t addDays(time_t startTime, int days) {
