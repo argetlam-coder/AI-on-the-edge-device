@@ -106,6 +106,11 @@ bool Init_NVS_SDCard()
     // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
     sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
 
+    // SD card pins of the freenove
+    slot_config.clk = GPIO_NUM_39;
+    slot_config.cmd = GPIO_NUM_38;
+    slot_config.d0 = GPIO_NUM_40;
+
    // Set bus width to use:
    #ifdef __SD_USE_ONE_LINE_MODE__
       slot_config.width = 1;

@@ -59,18 +59,18 @@
 
 
     //Statusled + ClassControllCamera
-    #define BLINK_GPIO GPIO_NUM_33              // PIN for red board LED
+    #define BLINK_GPIO GPIO_NUM_2                       // PIN for red board LED
 
 
     //ClassControllCamera
-    #define FLASH_GPIO GPIO_NUM_4               // PIN for flashlight LED
+    #define FLASH_GPIO GPIO_NUM_48                       // PIN for flashlight LED
     #define USE_PWM_LEDFLASH                    // if __LEDGLOBAL is defined, a global variable is used for LED control, otherwise locally and each time a new
     #define CAM_LIVESTREAM_REFRESHRATE 500      // Camera livestream feature: Waiting time in milliseconds to refresh image
 
 
     //ClassControllCamera + ClassFlowTakeImage
-    #define CAMERA_MODEL_AI_THINKER
-    #define BOARD_ESP32CAM_AITHINKER
+    #define CAMERA_MODEL_FREENOVE
+    #define BOARD_FREENOVE_ESP32_S3_WROOM
 
 
     //server_GPIO
@@ -276,6 +276,25 @@
     #define HREF_GPIO_NUM     GPIO_NUM_23
     #define PCLK_GPIO_NUM     GPIO_NUM_22
 
+#elif defined(CAMERA_MODEL_FREENOVE)
+    #define PWDN_GPIO_NUM     -1
+    #define RESET_GPIO_NUM    -1
+    #define XCLK_GPIO_NUM     15
+    #define SIOD_GPIO_NUM     4
+    #define SIOC_GPIO_NUM     5
+
+    #define Y9_GPIO_NUM       16
+    #define Y8_GPIO_NUM       17
+    #define Y7_GPIO_NUM       18
+    #define Y6_GPIO_NUM       12
+    #define Y5_GPIO_NUM       10
+    #define Y4_GPIO_NUM       8
+    #define Y3_GPIO_NUM       9
+    #define Y2_GPIO_NUM       11
+    #define VSYNC_GPIO_NUM    6
+    #define HREF_GPIO_NUM     7
+    #define PCLK_GPIO_NUM     13
+
 #else
     #error "Camera model not selected"
 #endif  //camera model
@@ -325,6 +344,28 @@
     #define CAM_PIN_PCLK 22
 
 #endif // ESP32Cam (AiThinker) PIN Map
+
+#ifdef BOARD_FREENOVE_ESP32_S3_WROOM // Freenove ESP32-S3 WROOM PIN Map
+
+    #define CAM_PIN_PWDN -1  //power down is not used
+    #define CAM_PIN_RESET -1 //software reset will be performed
+    #define CAM_PIN_XCLK 15
+    #define CAM_PIN_SIOD 4
+    #define CAM_PIN_SIOC 5
+
+    #define CAM_PIN_D7 16
+    #define CAM_PIN_D6 17
+    #define CAM_PIN_D5 18
+    #define CAM_PIN_D4 12
+    #define CAM_PIN_D3 10
+    #define CAM_PIN_D2 8
+    #define CAM_PIN_D1 9
+    #define CAM_PIN_D0 11
+    #define CAM_PIN_VSYNC 6
+    #define CAM_PIN_HREF 7
+    #define CAM_PIN_PCLK 13
+
+#endif // Freenove ESP32-S3 WROOM PIN Map
 
 // ******* LED definition
 #ifdef USE_PWM_LEDFLASH
