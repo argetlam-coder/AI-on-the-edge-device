@@ -249,7 +249,7 @@ extern "C" void app_main(void)
                 else { // OK
                     // Init camera
                     // ********************************************
-                    PowerResetCamera();
+                    //PowerResetCamera();
                     esp_err_t camStatus = Camera.InitCam();
                     Camera.LightOnOff(false);
 
@@ -265,7 +265,7 @@ extern "C" void app_main(void)
                         sprintf(camStatusHex,"0x%02x", camStatus);
                         LogFile.WriteToFile(ESP_LOG_WARN, TAG, "Camera init failed (" + std::string(camStatusHex) + "), retrying...");
 
-                        PowerResetCamera();
+                        //PowerResetCamera();
                         camStatus = Camera.InitCam();
                         Camera.LightOnOff(false);
 
