@@ -106,10 +106,12 @@ bool Init_NVS_SDCard()
     // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
     sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
 
-    // SD card pins of the freenove
-    slot_config.clk = GPIO_NUM_39;
-    slot_config.cmd = GPIO_NUM_38;
-    slot_config.d0 = GPIO_NUM_40;
+    #ifdef BOARD_FREENOVE_ESP32_S3_WROOM
+        // SD card pins of the freenove
+        slot_config.clk = SDMMC_SLOT_PIN_CLK;
+        slot_config.cmd = SDMMC_SLOT_PIN_CMD;
+        slot_config.d0 = SDMMC_SLOT_PIN_D0;
+    #endif
 
    // Set bus width to use:
    #ifdef __SD_USE_ONE_LINE_MODE__
@@ -249,7 +251,7 @@ extern "C" void app_main(void)
                 else { // OK
                     // Init camera
                     // ********************************************
-                    //PowerResetCamera();
+                    PowerResetCamera();
                     esp_err_t camStatus = Camera.InitCam();
                     Camera.LightOnOff(false);
 
@@ -265,7 +267,7 @@ extern "C" void app_main(void)
                         sprintf(camStatusHex,"0x%02x", camStatus);
                         LogFile.WriteToFile(ESP_LOG_WARN, TAG, "Camera init failed (" + std::string(camStatusHex) + "), retrying...");
 
-                        //PowerResetCamera();
+                        PowerResetCamera();
                         camStatus = Camera.InitCam();
                         Camera.LightOnOff(false);
 

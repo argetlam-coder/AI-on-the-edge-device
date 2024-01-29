@@ -57,25 +57,11 @@
     #define XTENSA
     //#define CONFIG_IDF_TARGET_ARCH_XTENSA     //not needed with platformio/espressif32 @ 5.2.0
 
-
-    //Statusled + ClassControllCamera
-    #define BLINK_GPIO GPIO_NUM_2                       // PIN for red board LED
-
-
     //ClassControllCamera
-    #define FLASH_GPIO GPIO_NUM_48                       // PIN for flashlight LED
-    #define USE_PWM_LEDFLASH                    // if __LEDGLOBAL is defined, a global variable is used for LED control, otherwise locally and each time a new
     #define CAM_LIVESTREAM_REFRESHRATE 500      // Camera livestream feature: Waiting time in milliseconds to refresh image
-
-
-    //ClassControllCamera + ClassFlowTakeImage
-    #define CAMERA_MODEL_FREENOVE
-    #define BOARD_FREENOVE_ESP32_S3_WROOM
-
 
     //server_GPIO
     #define __LEDGLOBAL
-
 
     //server_GPIO + server_file + SoftAP
     #define CONFIG_FILE "/sdcard/config/config.ini"
@@ -88,10 +74,6 @@
 
     //ClassFlowControll + Main + SoftAP
     #define WLAN_CONFIG_FILE "/sdcard/wlan.ini"
-
-
-    //main
-    #define __SD_USE_ONE_LINE_MODE__
 
     // server_file + Helper
      #define FILE_PATH_MAX (255) //Max length a file path can have on storage
@@ -218,7 +200,7 @@
 ////      Conditionnal definitions       ////
 /////////////////////////////////////////////
 
-//******* camera model 
+//******* camera model (ClassControllCamera + ClassFlowTakeImage)
 #if defined(CAMERA_MODEL_WROVER_KIT)
     #define PWDN_GPIO_NUM    -1
     #define RESET_GPIO_NUM   -1
@@ -343,6 +325,16 @@
     #define CAM_PIN_HREF 23
     #define CAM_PIN_PCLK 22
 
+    //SDMMC slot (main)
+    #define __SD_USE_ONE_LINE_MODE__
+
+    //Statusled + ClassControllCamera
+    #define BLINK_GPIO GPIO_NUM_33              // PIN for red board LED
+
+    //ClassControllCamera
+    #define FLASH_GPIO GPIO_NUM_4               // PIN for flashlight LED
+    #define USE_PWM_LEDFLASH                    // if __LEDGLOBAL is defined, a global variable is used for LED control, otherwise locally and each time a new    
+
 #endif // ESP32Cam (AiThinker) PIN Map
 
 #ifdef BOARD_FREENOVE_ESP32_S3_WROOM // Freenove ESP32-S3 WROOM PIN Map
@@ -364,6 +356,18 @@
     #define CAM_PIN_VSYNC 6
     #define CAM_PIN_HREF 7
     #define CAM_PIN_PCLK 13
+
+    //SDMMC slot (main)
+    #define __SD_USE_ONE_LINE_MODE__                    // only one line mode is available on the freenove board
+    #define SDMMC_SLOT_PIN_CLK GPIO_NUM_39
+    #define SDMMC_SLOT_PIN_CMD GPIO_NUM_38
+    #define SDMMC_SLOT_PIN_D0 GPIO_NUM_40
+
+    //Statusled + ClassControllCamera
+    #define BLINK_GPIO GPIO_NUM_2                       // PIN for blue board LED
+
+    //ClassControllCamera
+    #define FLASH_GPIO GPIO_NUM_48                       // PIN for flashlight LED (WS2812)
 
 #endif // Freenove ESP32-S3 WROOM PIN Map
 

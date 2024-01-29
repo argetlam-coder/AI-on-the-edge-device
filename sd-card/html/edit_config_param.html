@@ -1495,7 +1495,83 @@
 			<td></td>
 		</tr>
 		<!------------- GPIO13 end ------------------>
+		
+		<!------------- GPIO48 begin ------------------>
+		<tr class="GPIO_item" style="border-bottom: 0px;">
+			<td class="indent1">
+				<input type="checkbox" id="GPIO_IO48_enabled" value="1"  onclick = 'InvertEnableItem("GPIO", "IO48")' checked>
+				<label for=GPIO_IO48_enabled><span id="GPIO_IO48_text">GPIO48 Configuration</span></label>
+			</td>
+			<td>
+				<select id="GPIO_IO48_value1">
+					<option value="input">input</option>
+					<option value="input-pullup">input pullup</option>
+					<option value="input-pulldown">input pulldown</option>
+					<option value="output">output</option>
+					<option value="built-in-flash-ws281x" select>built-in flash light ws281x controlled</option>
+				</select>
+			</td>
+			<td>$TOOLTIP_GPIO_IO48</td>
+		</tr>
+		<tr class="GPIO_item" style="border-top: 0px;">
+			<td colspan="2" style="padding-left:28px">
+				<b>IMPORTANT NOTE:</b><br>
+				If you'd like to use the built-in flash LED in parallel with other GPIO functionality,
+				you have to explicitely activate the "built-in LED flash light" option on GPIO48.
+			</td>
+		</tr>
+		<tr class="GPIO_IO48 GPIO_item expert">
+			<td class="indent2">
+				<span class="GPIO_IO48 GPIO_item">GPIO48 Use Interrupt</span>
+			</td>
+			<td>
+				<select id="GPIO_IO48_value2">
+					<option value="disabled">disabled</option>
+					<option value="rising-edge">rising edge</option>
+					<option value="falling-edge">falling edge</option>
+					<option value="rising-and-falling">rising and falling</option>
+					<option value="low-level-trigger">low level trigger</option>
+					<option value="high-level-trigger">high level trigger</option>
+				</select>	
+			</td>
+			<td></td>
+		</tr>
 
+		<tr class="GPIO_IO48 GPIO_item expert">
+			<td class="indent2">
+				<span class="GPIO_IO48 GPIO_item">GPIO48 PWM Duty Cycle Resolution</span>
+			</td>
+			<td><input required type="number" id="GPIO_IO48_value3" min="1" max="20"
+					oninput="(!validity.rangeUnderflow||(value=1)) && (!validity.rangeOverflow||(value=20)) && 
+						(!validity.stepMismatch||(value=parseInt(this.value)));"><span class="GPIO_IO48 GPIO_item">Bits</span>
+			</td>
+			<td></td>
+		</tr>
+
+		<tr class="GPIO_IO48 GPIO_item expert">
+			<td class="indent2">
+				<span class="GPIO_IO48 GPIO_item">GPIO48 Enable MQTT</span>
+			</td>
+			<td><input type="checkbox" id="GPIO_IO48_value4"></td>
+			<td></td>
+		</tr>
+
+		<tr class="GPIO_IO48 GPIO_item expert">
+			<td class="indent2">
+				<span class="GPIO_IO48 GPIO_item">GPIO48 Enable REST API</span>
+			</td>
+			<td><input type="checkbox" id="GPIO_IO48_value5"></td>
+			<td></td>
+		</tr>
+
+		<tr class="GPIO_IO48 GPIO_item expert">
+			<td class="indent2">
+				<span class="GPIO_IO48 GPIO_item">GPIO48 Name</span>
+			</td>
+			<td><input type="text" id="GPIO_IO48_value6"></td>
+			<td></td>
+		</tr>
+		<!------------- GPIO4 end ------------------>
 
 		<!------------- Autotimer ------------------>
 		<tr style="border-bottom: 2px solid lightgray;">
@@ -2146,6 +2222,7 @@ function UpdateInput() {
     WriteParameter(param, category, "GPIO", "IO4", true);
     WriteParameter(param, category, "GPIO", "IO12", true);
     WriteParameter(param, category, "GPIO", "IO13", true);
+	WriteParameter(param, category, "GPIO", "IO48", true);
     WriteParameter(param, category, "GPIO", "LEDType", false);
     WriteParameter(param, category, "GPIO", "LEDNumbers", false);
     WriteParameter(param, category, "GPIO", "LEDColor", false);
@@ -2284,6 +2361,7 @@ function ReadParameterAll()
     ReadParameter(param, "GPIO", "IO4", true);
     ReadParameter(param, "GPIO", "IO12", true);
     ReadParameter(param, "GPIO", "IO13", true);
+	ReadParameter(param, "GPIO", "IO48", true);
     ReadParameter(param, "GPIO", "LEDType", false);
     ReadParameter(param, "GPIO", "LEDNumbers", false);
     ReadParameter(param, "GPIO", "LEDColor", false);
@@ -2372,6 +2450,11 @@ function UpdateExpertModus()
 
     Array.from(document.querySelector("#GPIO_IO12_value1").options).forEach(function(option_element) {
         if (option_element.value != "external-flash-ws281x")
+            option_element.hidden = _hidden;
+    });
+	
+	Array.from(document.querySelector("#GPIO_IO48_value1").options).forEach(function(option_element) {
+        if (option_element.value != "built-in-flash-ws281x")
             option_element.hidden = _hidden;
     });
 }
