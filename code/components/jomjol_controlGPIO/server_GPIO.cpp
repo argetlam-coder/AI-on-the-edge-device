@@ -107,7 +107,7 @@ void GpioPin::init()
     gpio_config(&io_conf);
 
 //    if (_interruptType != GPIO_INTR_DISABLE) {                // ohne GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X, wenn das genutzt wird, dann soll auch der Handler hier nicht initialisiert werden, da das dann über SmartLED erfolgt.
-    if ((_interruptType != GPIO_INTR_DISABLE) && (_interruptType != GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X)) {
+    if ((_interruptType != GPIO_INTR_DISABLE) && (_interruptType != GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X) && (_interruptType != GPIO_PIN_MODE_INTERNAL_FLASH_WS281X)) {
         //hook isr handler for specific gpio pin
         ESP_LOGD(TAG, "GpioPin::init add isr handler for GPIO %d", _gpio);
         gpio_isr_handler_add(_gpio, gpio_isr_handler, (void*)&_gpio);
@@ -577,7 +577,7 @@ void GpioHandler::flashLightEnable(bool value)
                 }
             } else 
                 {
-                    if (it->second->getMode() == GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X)
+                    if (it->second->getMode() == GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X || it->second->getMode() == GPIO_PIN_MODE_INTERNAL_FLASH_WS281X)
                     {
 #ifdef __LEDGLOBAL
                         if (leds_global == NULL) {
@@ -651,6 +651,7 @@ gpio_pin_mode_t GpioHandler::resolvePinMode(std::string input)
     if( input == "output-pwm" ) return GPIO_PIN_MODE_OUTPUT_PWM;
     if( input == "external-flash-pwm" ) return GPIO_PIN_MODE_EXTERNAL_FLASH_PWM;
     if( input == "external-flash-ws281x" ) return GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X;
+	if( input == "built-in-flash-ws281x" ) return GPIO_PIN_MODE_INTERNAL_FLASH_WS281X;
 
     return GPIO_PIN_MODE_DISABLED;
 }
