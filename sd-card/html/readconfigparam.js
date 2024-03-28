@@ -117,10 +117,19 @@ function ParseConfig() {
      ParamAddValue(param, catname, "Brightness");
      ParamAddValue(param, catname, "Contrast");
      ParamAddValue(param, catname, "Saturation");
+     ParamAddValue(param, catname, "Sharpness");
      ParamAddValue(param, catname, "LEDIntensity");
      ParamAddValue(param, catname, "ImageQuality");
-     ParamAddValue(param, catname, "ImageSize");     
-     ParamAddValue(param, catname, "FixedExposure");     
+     ParamAddValue(param, catname, "ImageSize");
+     ParamAddValue(param, catname, "Zoom");
+     ParamAddValue(param, catname, "ZoomMode");
+     ParamAddValue(param, catname, "ZoomOffsetX");
+     ParamAddValue(param, catname, "ZoomOffsetY");
+     ParamAddValue(param, catname, "Grayscale");
+     ParamAddValue(param, catname, "Negative");
+     ParamAddValue(param, catname, "Aec2");
+     ParamAddValue(param, catname, "AutoExposureLevel");
+     ParamAddValue(param, catname, "FixedExposure");
 
      var catname = "Alignment";
      category[catname] = new Object(); 
@@ -459,8 +468,6 @@ function WriteConfigININew()
           }
      }
 
-
-
      config_split = new Array(0);
 
      for (var cat in param) {
@@ -557,7 +564,6 @@ function WriteConfigININew()
 }
 
 
-
 function isCommented(input)
      {
           let isComment = false;
@@ -592,7 +598,6 @@ function getConfig() {
 function getConfigCategory() {
      return category;
 }
-
 
 
 function ExtractROIs(_aktline, _type){
@@ -670,7 +675,6 @@ function getNUMBERS(_name, _type, _create = true)
 }
 
  
-
 function CopyReferenceToImgTmp(_domainname)
 {
      for (index = 0; index < 2; ++index)
@@ -692,7 +696,7 @@ function GetReferencesInfo(){
 }
 
 
-function UpdateConfigReference(_domainname){
+function UpdateConfigReferences(_domainname){
      for (var index = 0; index < 2; ++index)
      {
           _filenamenach = REFERENCES[index]["name"];
@@ -704,9 +708,33 @@ function UpdateConfigReference(_domainname){
           _filenamevon = _filenamevon.replace(".jpg", "_org.jpg");
           FileDeleteOnServer(_filenamenach, _domainname);
           FileCopyOnServer(_filenamevon, _filenamenach, _domainname);
-
      }
 }
+
+
+function UpdateConfigReference(_anzneueref, _domainname){
+    var index = 0;
+
+    if (_anzneueref == 1) {	
+        index = 0;
+    }
+
+    else if (_anzneueref == 2) {
+        index = 1;
+    }
+
+    _filenamenach = REFERENCES[index]["name"];
+    _filenamevon = _filenamenach.replace("/config/", "/img_tmp/");
+
+    FileDeleteOnServer(_filenamenach, _domainname);
+    FileCopyOnServer(_filenamevon, _filenamenach, _domainname);
+
+    _filenamenach = _filenamenach.replace(".jpg", "_org.jpg");
+    _filenamevon = _filenamevon.replace(".jpg", "_org.jpg");
+
+    FileDeleteOnServer(_filenamenach, _domainname);
+    FileCopyOnServer(_filenamevon, _filenamenach, _domainname);
+}	
 
 
 function getNUMBERInfo(){

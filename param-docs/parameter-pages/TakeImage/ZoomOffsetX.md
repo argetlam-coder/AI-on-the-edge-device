@@ -1,5 +1,5 @@
-# Parameter `FixedExposure`
-Default Value: `false`
+# Parameter `ZoomOffsetX`
+Default Value: `0`
 
 !!! Warning
     This is an **Expert Parameter**! Only change it if you understand what it does!
@@ -10,4 +10,5 @@ Default Value: `false`
 !!! Note
     After changing this parameter you need to update your reference image and alignment markers!
 
-Fixes the illumination setting of camera at the startup and uses this later -> Individual round is faster.
+`ZoomOffsetX` only applies when `Zoom` is enabled.
+X coordinate of the crop location within the camera sensor frame.

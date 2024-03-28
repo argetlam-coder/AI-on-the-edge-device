@@ -59,6 +59,7 @@
 
     //ClassControllCamera
     #define CAM_LIVESTREAM_REFRESHRATE 500      // Camera livestream feature: Waiting time in milliseconds to refresh image
+    // #define GRAYSCALE_AS_DEFAULT
 
     //server_GPIO
     #define __LEDGLOBAL

@@ -183,7 +183,7 @@
 			The description of each parameter can be shown by hovering over or by clicking the <img src="help.png" width="16px"> icon.
 		</p>
 		<p>	
-			The page gets opened with the default view which should be sufficient for regular configuration tasks. Enabling the <b>"Expert View"</b>
+			The page gets opened with the default view which should be sufficient for regular configuration tasks. Enabling the <b>"Show Expert Parameters"</b>
 			some expert parameters (light red background color) will be added to the parameter list. Additionally the button <b>"Edit "Config.ini" File"</b>
 			to edit the underlaying configuration file (config.ini) manually is now shown on top of the page. This function should be only used for special cases.
 		</p>
@@ -217,10 +217,10 @@
 		<tr>
 			<td class="indent1">
 				<input style="margin-top:12px;margin-bottom:12px" type="checkbox" id="ExpertModus_enabled" value="1"  onclick='UpdateExpertModus()' unchecked>
-					<label for="ExpertModus_enabled">Expert View</label> 
+					<label for="ExpertModus_enabled">Show Expert Parameters</label> 
 			</td>
 			<td>
-				<button style="display:none;" class="button" id="Edit_Config_Direct" onclick="editConfigDirect()">Edit "Config.ini" File</button>
+				<button style="display:none;" class="button" id="Button_Edit_Config_Raw" onclick="editConfigRaw()">Edit Config file in raw mode</button>
 			</td>
 		</tr>
 
@@ -252,7 +252,7 @@
 			<td>$TOOLTIP_TakeImage_RawImagesRetention</td>
 		</tr>
 
-		<tr class="expert" id="ex1">
+		<tr class="expert" unused_id="ex1">
 			<td class="indent1">
 				<label><class id="TakeImage_Demo_text" style="color:black;">Demo Mode</class></label>
 			</td>
@@ -265,8 +265,7 @@
 			<td>$TOOLTIP_TakeImage_Demo</td>
 		</tr>
 
-		<tr class="expert" id="ex1">
-			
+		<tr class="expert" unused_id="ex1">
 			<td class="indent1">
 				<class id="TakeImage_WaitBeforeTakingPicture_text" style="color:black;">Wait Before Taking Picture</class>
 			</td>
@@ -277,24 +276,84 @@
 			<td>$TOOLTIP_TakeImage_WaitBeforeTakingPicture</td>
 		</tr>
 
-		<tr class="expert" id="ex2">
+		<tr unused_id="Brightness_ex3">
+			<td class="indent1">
+				<class id="TakeImage_Brightness_text" style="color:black;">Brightness</class>
+			</td>
+			<td>
+				<input required type="number" id="TakeImage_Brightness_value1" size="13" min="-2" max="2" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) &&
+						(!validity.stepMismatch||(value=parseInt(this.value)));">
+			</td>
+			<td>$TOOLTIP_TakeImage_Brightness</td>
+		</tr>
+
+		<tr unused_id="Contrast_ex3">
+			<td class="indent1">
+				<class id="TakeImage_Contrast_text" style="color:black;">Contrast</class>
+			</td>
+			<td>
+				<input required type="number" id="TakeImage_Contrast_value1" size="13" min="-2" max="2" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) &&
+						(!validity.stepMismatch||(value=parseInt(this.value)));">
+			</td>
+			<td>$TOOLTIP_TakeImage_Contrast</td>
+		</tr>
+
+		<tr unused_id="Saturation_ex3">
+			<td class="indent1">
+				<class id="TakeImage_Saturation_text" style="color:black;">Saturation</class>
+			</td>
+			<td>
+				<input required type="number" id="TakeImage_Saturation_value1" size="13" min="-2" max="2" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) &&
+						(!validity.stepMismatch||(value=parseInt(this.value)));">
+			</td>
+			<td>$TOOLTIP_TakeImage_Saturation</td>
+		</tr>
+
+		<tr class="expert" unused_id="TakeImage_Sharpness_ex3">
+			<td class="indent1">
+				<class id="TakeImage_Sharpness_text" style="color:black;">Sharpness</class>
+			</td>
+			<td>
+				<input required type="number" id="TakeImage_Sharpness_value1" size="13" min="-4" max="3" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=-4)) && (!validity.rangeOverflow||(value=3)) &&
+						(!validity.stepMismatch||(value=parseInt(this.value)));">
+			</td>
+			<td>$TOOLTIP_TakeImage_Sharpness</td>
+		</tr>
+
+		<tr unused_id="LEDIntensity_ex3">
+			<td class="indent1">
+				<class id="TakeImage_LEDIntensity_text" style="color:black;">LED Intensity</class>
+			</td>
+			<td>
+				<input required type="number" id="TakeImage_LEDIntensity_value1" size="13" min="0" max="100" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=0)) && (!validity.rangeOverflow||(value=100)) &&
+						(!validity.stepMismatch||(value=parseInt(this.value)));">
+			</td>
+			<td>$TOOLTIP_TakeImage_LEDIntensity</td>
+		</tr>
+
+		<tr class="expert" unused_id="ex2">
 			<td class="indent1">
 				<class id="TakeImage_ImageQuality_text" style="color:black;">Image Quality</class>
 			</td>
 			<td>
-				<input required type="number" id="TakeImage_ImageQuality_value1" size="13" min="8" max="63"
-					oninput="(!validity.rangeUnderflow||(value=8)) && (!validity.rangeOverflow||(value=63)) && 
+				<input required type="number" id="TakeImage_ImageQuality_value1" size="13" min="8" max="63" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=8)) && (!validity.rangeOverflow||(value=63)) &&
 						(!validity.stepMismatch||(value=parseInt(this.value)));">
 			</td>
 			<td>$TOOLTIP_TakeImage_ImageQuality</td>
 		</tr>
 
-		<tr class="expert"  id="ex3">
+		<tr class="expert" unused_id="ex3">
 			<td class="indent1">
 				<class id="TakeImage_ImageSize_text" style="color:black;">Image Size</class>
 			</td>
 			<td>
-				<select id="TakeImage_ImageSize_value1">
+				<select id="TakeImage_ImageSize_value1" onchange="cameraParameterChanged()">
 					<option value="VGA" selected>VGA</option>
 					<option value="QVGA" >QVGA</option>
 				</select>
@@ -302,74 +361,126 @@
 			<td>$TOOLTIP_TakeImage_ImageSize</td>
 		</tr>
 
-		<tr class="expert"  id="LEDIntensity_ex3">
+		<tr class="expert" unused_id="TakeImage_Zoom_ex10">
 			<td class="indent1">
-				<class id="TakeImage_LEDIntensity_text" style="color:black;">LED Intensity</class>
+				<class id="TakeImage_Zoom_text" style="color:black;">Zoom</class>
 			</td>
 			<td>
-				<input required type="number" id="TakeImage_LEDIntensity_value1" size="13" min="0" max="100"
-					oninput="(!validity.rangeUnderflow||(value=0)) && (!validity.rangeOverflow||(value=100)) && 
-						(!validity.stepMismatch||(value=parseInt(this.value)));">
+				<select id="TakeImage_Zoom_value1" onchange="cameraParameterChanged()">
+					<option value="true">true</option>
+					<option value="false" selected>false</option>
+				</select>
 			</td>
-			<td>$TOOLTIP_TakeImage_LEDIntensity</td>
+			<td>$TOOLTIP_TakeImage_Zoom</td>
 		</tr>
 
-		<tr class="expert"  id="Brightness_ex3">
+		<tr class="expert" unused_id="TakeImage_ZoomMode_ex10">
 			<td class="indent1">
-				<class id="TakeImage_Brightness_text" style="color:black;">Brightness</class>
+				<class id="TakeImage_ZoomMode_text" style="color:black;">Zoom Mode</class>
 			</td>
 			<td>
-				<input required type="number" id="TakeImage_Brightness_value1" size="13" min="-2" max="2"
-					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) && 
-						(!validity.stepMismatch||(value=parseInt(this.value)));">
+				<select id="TakeImage_ZoomMode_value1" onchange="cameraParameterChanged()">
+					<option value="1">1</option>
+					<option value="0" selected>0</option>
+				</select>
 			</td>
-			<td>$TOOLTIP_TakeImage_Brightness</td>
+			<td>$TOOLTIP_TakeImage_ZoomMode</td>
 		</tr>
 
-		<tr class="expert"  id="Contrast_ex3">
+		<tr class="expert" unused_id="ex1">
+
 			<td class="indent1">
-				<class id="TakeImage_Contrast_text" style="color:black;">Contrast</class>
+				<class id="TakeImage_ZoomOffsetX_text" style="color:black;">Zoom Offset X</class>
 			</td>
 			<td>
-				<input required type="number" id="TakeImage_Contrast_value1" size="13" min="-2" max="2"
-					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) && 
-						(!validity.stepMismatch||(value=parseInt(this.value)));">
+				<input required type="number" id="TakeImage_ZoomOffsetX_value1" size="13" min="0" step="any" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=0));">Pixel
 			</td>
-			<td>$TOOLTIP_TakeImage_Contrast</td>
+			<td>$TOOLTIP_TakeImage_ZoomOffsetX</td>
 		</tr>
 
-		<tr class="expert"  id="Saturation_ex3">
+		<tr class="expert" unused_id="ex1">
+
 			<td class="indent1">
-				<class id="TakeImage_Saturation_text" style="color:black;">Saturation</class>
+				<class id="TakeImage_ZoomOffsetY_text" style="color:black;">Zoom Offset Y</class>
 			</td>
 			<td>
-				<input required type="number" id="TakeImage_Saturation_value1" size="13" min="-2" max="2"
-					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) && 
+				<input required type="number" id="TakeImage_ZoomOffsetY_value1" size="13" min="0" step="any" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=0));">Pixel
+			</td>
+			<td>$TOOLTIP_TakeImage_ZoomOffsetY</td>
+		</tr>
+
+		<tr class="expert" unused_id="TakeImage_Grayscale_ex10">
+			<td class="indent1">
+				<class id="TakeImage_Grayscale_text" style="color:black;">Grayscale</class>
+			</td>
+			<td>
+				<select id="TakeImage_Grayscale_value1" onchange="cameraParameterChanged()">
+					<option value="true">true</option>
+					<option value="false" selected>false</option>
+				</select>
+			</td>
+			<td>$TOOLTIP_TakeImage_Grayscale</td>
+		</tr>
+
+		<tr class="expert" unused_id="TakeImage_Negative_ex10">
+			<td class="indent1">
+				<class id="TakeImage_Negative_text" style="color:black;">Negative</class>
+			</td>
+			<td>
+				<select id="TakeImage_Negative_value1" onchange="cameraParameterChanged()">
+					<option value="true">true</option>
+					<option value="false" selected>false</option>
+				</select>
+			</td>
+			<td>$TOOLTIP_TakeImage_Negative</td>
+		</tr>
+
+		<tr class="expert" unused_id="TakeImage_Aec2_ex10">
+			<td class="indent1">
+				<class id="TakeImage_Aec2_text" style="color:black;">Auto-exposure Control 2</class>
+			</td>
+			<td>
+				<select id="TakeImage_Aec2_value1" onchange="cameraParameterChanged()">
+					<option value="true">true</option>
+					<option value="false" selected>false</option>
+				</select>
+			</td>
+			<td>$TOOLTIP_TakeImage_Aec2</td>
+		</tr>
+
+		<tr class="expert" unused_id="TakeImage_AutoExposureLevel_ex3">
+			<td class="indent1">
+				<class id="TakeImage_AutoExposureLevel_text" style="color:black;">Auto Exposure Level</class>
+			</td>
+			<td>
+				<input required type="number" id="TakeImage_AutoExposureLevel_value1" size="13" min="-2" max="2" onchange="cameraParameterChanged()"
+					oninput="(!validity.rangeUnderflow||(value=-2)) && (!validity.rangeOverflow||(value=2)) &&
 						(!validity.stepMismatch||(value=parseInt(this.value)));">
 			</td>
-			<td>$TOOLTIP_TakeImage_Saturation</td>
+			<td>$TOOLTIP_TakeImage_AutoExposureLevel</td>
 		</tr>
-		
-		<tr class="expert"  id="TakeImage_FixedExposure_ex10">
+
+		<tr class="expert" unused_id="TakeImage_FixedExposure_ex10">
 			<td class="indent1">
 				<class id="TakeImage_FixedExposure_text" style="color:black;">Fixed Exposure</class>
 			</td>
 			<td>
-				<select id="TakeImage_FixedExposure_value1">
-					<option value="true" selected>true</option>
-					<option value="false" >false</option>
+				<select id="TakeImage_FixedExposure_value1" onchange="cameraParameterChanged()">
+					<option value="true">true</option>
+					<option value="false" selected>false</option>
 				</select>
 			</td>
 			<td>$TOOLTIP_TakeImage_FixedExposure</td>
 		</tr>
 
-
 		<!------------- Alignment ------------------>
-		<tr class="expert"  style="border-bottom: 2px solid lightgray;" id="ex4">
+		<tr  style="border-bottom: 2px solid lightgray;" id="ex4">
 			<td colspan="3" style="padding-left: 0px; padding-bottom: 3px;"><h4>Alignment</h4></td>
 		</tr>
 
-		<tr class="expert"  id="ex6">
+		<tr class="expert" unused_id="ex6">
 			<td class="indent1">
 			    <class id="Alignment_SearchFieldX_text" style="color:black;">Search Field X</class>
 			</td>
@@ -380,7 +491,7 @@
 			<td>$TOOLTIP_Alignment_SearchFieldX</td>
 		</tr>
 
-		<tr class="expert"  id="ex8">
+		<tr class="expert" unused_id="ex8">
 			<td class="indent1">
 				<class id="Alignment_SearchFieldY_text" style="color:black;">Search Field Y</class>
 			</td>
@@ -391,7 +502,7 @@
 			<td>$TOOLTIP_Alignment_SearchFieldY</td>
 		</tr>
 
-		<tr class="expert"  id="AlignmentAlgo_ex8">
+		<tr class="expert" unused_id="AlignmentAlgo_ex8">
 			<td class="indent1">
 				<input type="checkbox" id="Alignment_AlignmentAlgo_enabled" value="1"  onclick = 'InvertEnableItem("Alignment", "AlignmentAlgo")' unchecked >
 				<label for=Alignment_AlignmentAlgo_enabled><class id="Alignment_AlignmentAlgo_text" style="color:black;">Alignment Algorithm</class></label>
@@ -407,7 +518,7 @@
 			<td>$TOOLTIP_Alignment_AlignmentAlgo</td>
 		</tr>
 
-		<tr class="expert"  id="ex13">
+		<tr unused_id="ex13">
 			<td class="indent1">
 			    <class id="Alignment_FlipImageSize_text" style="color:black;">Flip Image Size</class>
 			</td>
@@ -420,7 +531,7 @@
 			<td>$TOOLTIP_Alignment_FlipImageSize</td>
 		</tr>
 
-		<tr class="expert"  id="ex13">
+		<tr unused_id="ex13">
 			<td class="indent1">
 			    <class id="Alignment_InitialMirror_text" style="color:black;">Initial Mirror</class>
 			</td>
@@ -433,6 +544,16 @@
 			<td>$TOOLTIP_Alignment_InitialMirror</td>
 		</tr>
 
+		<tr>
+			<td class="indent1">
+				<class id="Alignment_InitialRotate_text" style="color:black;">Rotation angle</class>
+			</td>
+			<td>
+				<input required type="number" name="name" id="Alignment_InitialRotate_value1" size="13" min="-360" max="+360" step="0.1"
+					oninput="(!validity.rangeUnderflow||(value=1)) && (!validity.stepMismatch||(value=parseInt(this.value)));">degree
+			</td>
+			<td>$TOOLTIP_Alignment_InitialRotate</td>
+		</tr>
 
 		<!------------- Digit ROIs ------------------>
 		<tr style="border-bottom: 2px solid lightgray;" id="Category_Digits_ex4">
@@ -453,7 +574,7 @@
 			<td>$TOOLTIP_Digits_Model</td>
 		</tr>
 		
-		<tr class="DigitItem expert"  id="ex91">
+		<tr class="DigitItem expert" unused_id="ex91">
 			<td class="indent1">
 				<input type="checkbox" id="Digits_CNNGoodThreshold_enabled" value="1"  onclick = 'InvertEnableItem("Digits", "CNNGoodThreshold")' unchecked >
 				<label for=Digits_CNNGoodThreshold_enabled><class id="Digits_CNNGoodThreshold_text" style="color:black;">CNN Good Threshold</class></label>
@@ -549,7 +670,7 @@
 			<td>$TOOLTIP_PostProcessing_PreValueUse</td>
 		</tr>
 
-		<tr class="expert"  id="ex11">
+		<tr class="expert" unused_id="ex11">
 			<td class="indent1">
 				<input type="checkbox" id="PostProcessing_PreValueAgeStartup_enabled" value="1"  onclick = 'InvertEnableItem("PostProcessing", "PreValueAgeStartup")' unchecked >
 				<label for=PostProcessing_PreValueAgeStartup_enabled><class id="PostProcessing_PreValueAgeStartup_text" style="color:black;">Maximum Age of Previous Value after Startup</class></label>
@@ -561,7 +682,7 @@
 			<td>$TOOLTIP_PostProcessing_PreValueAgeStartup</td>
 		</tr>
 
-		<tr class="expert"  id="ex12">
+		<tr class="expert" unused_id="ex12">
 			<td class="indent1">
 				<label><class id="PostProcessing_ErrorMessage_text" style="color:black;">Skip Messages on Error</class></label>
 			</td>
@@ -574,7 +695,7 @@
 			<td>$TOOLTIP_PostProcessing_ErrorMessage</td>
 		</tr>
 
-		<tr class="expert" id="ex1dddd">
+		<tr class="expert" unused_id="ex1dddd">
 			<td class="indent1">
 				<label><class id="PostProcessing_CheckDigitIncreaseConsistency_text" style="color:black;">Check Digit Increase Consistency</class></label>
 			</td>
@@ -628,8 +749,8 @@
 				<label for=PostProcessing_AnalogDigitalTransitionStart_enabled><class id="PostProcessing_AnalogDigitalTransitionStart_text" style="color:black;">Analog/Digital Transition Start</class></label>
 			</td>
 			<td>
-				<input required type="number" id="PostProcessing_AnalogDigitalTransitionStart_value1" step="0.1" min="0.1" max="9.9" value="9.2"
-					oninput="(!validity.rangeUnderflow||(value=0.1)) && (!validity.rangeOverflow||(value=9.9)) && 
+				<input required type="number" id="PostProcessing_AnalogDigitalTransitionStart_value1" step="0.1" min="6.0" max="9.9" value="9.2"
+					oninput="(!validity.rangeUnderflow||(value=6.0)) && (!validity.rangeOverflow||(value=9.9)) && 
 						(!validity.stepMismatch||(value=parseInt(this.value)));">
 			</td>
 			<td>$TOOLTIP_PostProcessing_NUMBER.AnalogDigitalTransitionStart</td>
@@ -753,7 +874,7 @@
 			<td>$TOOLTIP_MQTT_password</td>
 		</tr>
 
-		<tr class="MQTTItem expert" id="exMqtt">
+		<tr class="MQTTItem expert" unused_id="exMqtt">
 			<td class="indent1">
 				<input type="checkbox" id="MQTT_CACert_enabled" value="1"  onclick = 'InvertEnableItem("MQTT", "CACert")' unchecked >
 				<label for=MQTT_CACert_enabled><class id="MQTT_CACert_text" style="color:black;">Root CA Certificate file</class></label>
@@ -764,7 +885,7 @@
 			<td>$TOOLTIP_MQTT_CACert</td>
 		</tr>
 
-		<tr class="MQTTItem expert" id="exMqtt">
+		<tr class="MQTTItem expert" unused_id="exMqtt">
 			<td class="indent1">
 				<input type="checkbox" id="MQTT_ClientCert_enabled" value="1"  onclick = 'InvertEnableItem("MQTT", "ClientCert")' unchecked >
 				<label for=MQTT_ClientCert_enabled><class id="MQTT_ClientCert_text" style="color:black;">Client Certificate file</class></label>
@@ -775,7 +896,7 @@
 			<td>$TOOLTIP_MQTT_ClientCert</td>
 		</tr>
 
-		<tr class="MQTTItem expert" id="exMqtt">
+		<tr class="MQTTItem expert" unused_id="exMqtt">
 			<td class="indent1">
 				<input type="checkbox" id="MQTT_ClientKey_enabled" value="1"  onclick = 'InvertEnableItem("MQTT", "ClientKey")' unchecked >
 				<label for=MQTT_ClientKey_enabled><class id="MQTT_ClientKey_text" style="color:black;">Client Key file</class></label>
@@ -1382,7 +1503,7 @@
 			<td></td>
 		</tr>
 
-		<tr class="GPIO_item" id="wstypeex3">
+		<tr class="GPIO_item" unused_id="wstypeex3">
 			<td class="indent1">
 				<span class="GPIO_IO12 GPIO_item" id="GPIO_LEDType_text">LED Type (NeoPixel)</span>
 			</td>
@@ -1397,7 +1518,7 @@
 			<td>$TOOLTIP_GPIO_LEDType</td>
 		</tr>
 
-		<tr  class="GPIO_item" id="LEDANZex8" >
+		<tr  class="GPIO_item" unused_id="LEDANZex8" >
 			<td class="indent1">
 				<span class="GPIO_item" id="GPIO_LEDNumbers_text">Numbers of LEDs</span>
 			</td>
@@ -1408,7 +1529,7 @@
 			<td>$TOOLTIP_GPIO_LEDNumbers</td>
 		</tr>
 
-		<tr class="GPIO_item" id="LEDRGBex9">
+		<tr class="GPIO_item" unused_id="LEDRGBex9">
 			<td class="indent1">
 				<span class="GPIO_item" id="GPIO_LEDColor_text">LED Color</span>
 			</td>
@@ -1578,7 +1699,7 @@
 			<td colspan="3" style="padding-left: 0px; padding-bottom: 3px;"><h4>Auto Timer</h4></td>
 		</tr>
 
-		<tr class="expert"  id="ex13">
+		<tr class="expert" unused_id="ex13">
 			<td class="indent1">
 			    <class id="AutoTimer_AutoStart_text" style="color:black;">Automatic Round Start</class>
 			</td>
@@ -1682,7 +1803,7 @@
 			<td>$TOOLTIP_System_TimeZone</td>
 		</tr>
 
-		<tr class="expert"  id="ex16">
+		<tr class="expert" unused_id="ex16">
 			<td class="indent1">
 				<input type="checkbox" id="System_TimeServer_enabled" value="1"  onclick = 'InvertEnableItem("System", "TimeServer")' unchecked >
 				<label for=System_TimeServer_enabled><class id="System_TimeServer_text" style="color:black;">Time Server (NTP)</class></label>
@@ -1693,7 +1814,7 @@
 			<td>$TOOLTIP_System_TimeServer</td>
 		</tr>
 
-		<tr class="expert"  id="System_Hostname">
+		<tr class="expert" unused_id="System_Hostname">
 			<td class="indent1">
 				<input type="checkbox" id="System_Hostname_enabled" value="1"  onclick = 'InvertEnableItem("System", "Hostname")' unchecked >
 				<label for=System_Hostname_enabled><class id="System_Hostname_text" style="color:black;">Hostname</class></label>
@@ -1704,7 +1825,7 @@
 			<td>$TOOLTIP_System_Hostname</td>
 		</tr>
 
-		<tr class="expert"  id="System_RSSIThreshold">
+		<tr class="expert" unused_id="System_RSSIThreshold">
 			<td class="indent1">
 				<input type="checkbox" id="System_RSSIThreshold_enabled" value="1"  onclick = 'InvertEnableItem("System", "RSSIThreshold")' unchecked >
 				<label for=System_RSSIThreshold_enabled><class id="System_RSSIThreshold_text" style="color:black;">RSSI Threshold</class></label>
@@ -1717,7 +1838,7 @@
 			<td>$TOOLTIP_System_RSSIThreshold</td>
 		</tr>
 
-		<tr class="expert"  id="System_CPUFrequency">
+		<tr class="expert" unused_id="System_CPUFrequency">
 			<td class="indent1">
 				<input type="checkbox" id="System_CPUFrequency_enabled" value="1"  onclick = 'InvertEnableItem("System", "CPUFrequency")' unchecked >
 				<label for=System_CPUFrequency_enabled><class id="System_CPUFrequency_text" style="color:black;">CPU Frequency</class></label>
@@ -1748,50 +1869,80 @@
 <script type="text/javascript" src="readconfigparam.js?v=$COMMIT_HASH"></script>  
  
 <script type="text/javascript">
-	var canvas = document.getElementById('canvas'),
-		domainname = getDomainname(); 
-		param;
-		category;
-		NUNBERSAkt = -1;
-		NUMBERS;
+var canvas = document.getElementById('canvas'),
+    domainname = getDomainname(),
+    changeCamValue = 0,	
+    param,
+    category,
+    NUNBERSAkt = -1,
+    NUMBERS;
 
+	
+function cameraParameterChanged() {
+    changeCamValue = 1;
+
+    if (document.getElementById("TakeImage_Zoom_value1").value == "false") {
+        document.getElementById("TakeImage_ZoomMode_value1").disabled = true;
+        document.getElementById("TakeImage_ZoomOffsetX_value1").disabled = true;
+        document.getElementById("TakeImage_ZoomOffsetY_value1").disabled = true;		
+    }
+    else {
+        document.getElementById("TakeImage_ZoomMode_value1").disabled = false;
+        document.getElementById("TakeImage_ZoomOffsetX_value1").disabled = false;
+        document.getElementById("TakeImage_ZoomOffsetY_value1").disabled = false;	
+    }	
+}
+	
 
 function LoadConfigNeu() {
-	domainname = getDomainname(); 
-	if (!loadConfig(domainname)) {
-		firework.launch('Configuration could not be loaded! Please reload the page!', 'danger', 30000);
-		return;
-	} 
-	ParseConfig();	
-	param = getConfigParameters();
-	category = getConfigCategory();
-	InitIndivParameter();
+    domainname = getDomainname(); 
+    if (!loadConfig(domainname)) {
+        firework.launch('Configuration could not be loaded! Please reload the page!', 'danger', 30000);
+        return;
+    } 
+    ParseConfig();	
+    param = getConfigParameters();
+    category = getConfigCategory();
+    InitIndivParameter();
 
-	UpdateInput();
-	var sel = document.getElementById("Numbers_value1");
-	UpdateInputIndividual(sel);
-	UpdateExpertModus();
-	document.getElementById("divall").style.display = ''; 
+    UpdateInput();
+    var sel = document.getElementById("Numbers_value1");
+    UpdateInputIndividual(sel);
+    UpdateExpertModus();
+    document.getElementById("divall").style.display = ''; 
+
+    if (document.getElementById("TakeImage_Zoom_value1").value == "false") {
+        document.getElementById("TakeImage_ZoomMode_value1").disabled = true;
+        document.getElementById("TakeImage_ZoomOffsetX_value1").disabled = true;
+        document.getElementById("TakeImage_ZoomOffsetY_value1").disabled = true;		
+    }
+    else {
+        document.getElementById("TakeImage_ZoomMode_value1").disabled = false;
+        document.getElementById("TakeImage_ZoomOffsetX_value1").disabled = false;
+        document.getElementById("TakeImage_ZoomOffsetY_value1").disabled = false;	
+    }	
 }
 
 
-function InitIndivParameter()
-{
+function InitIndivParameter() {
     NUMBERS = getNUMBERInfo();
 
     var _index = document.getElementById("Numbers_value1");
-    while (_index.length)
+    while (_index.length) {
         _index.remove(0);
+    }
 
     var _indexInflux = document.getElementById("NumbersInfluxDBv2_value1");
-    while (_indexInflux.length)
+    while (_indexInflux.length) {
         _indexInflux.remove(0);
+    }
 
     var _indexInfluxv1 = document.getElementById("NumbersInfluxDB_value1");
-    while (_indexInflux.length)
-    _indexInfluxv1.remove(0);
+    while (_indexInfluxv1.length) {
+        _indexInfluxv1.remove(0);
+    }
 
-    for (var i = 0; i < NUMBERS.length; ++i){
+    for (var i = 0; i < NUMBERS.length; ++i) {
         var option = document.createElement("option");
         option.text = NUMBERS[i]["name"];
         option.value = i;
@@ -1806,8 +1957,8 @@ function InitIndivParameter()
         optionInfluxv1.text = NUMBERS[i]["name"];
         optionInfluxv1.value = i;
         _indexInfluxv1.add(optionInfluxv1);
-
     }
+	
     _index.selectedIndex = 0; 
     _indexInflux.selectedIndex = 0;
     _indexInfluxv1.selectedIndex = 0;
@@ -1817,15 +1968,16 @@ function InitIndivParameter()
 function getParameterByName(name, url = window.location.href) {
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
+    results = regex.exec(url);
 
-    if (!results) return null;
-    if (!results[2]) return '';
+    if (!results) {return null;}
+    if (!results[2]) {return '';}
+	
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }	
 
 
-function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1){
+function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1) {
     let anzpara;
     try {
         anzpara = _param[_cat][_name].anzParam;	
@@ -1836,8 +1988,9 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
     }
 
     if (_number > -1) {
-        if ((NUMBERS[_number] == undefined) || (NUMBERS[_number][_cat] == undefined) ||  (NUMBERS[_number][_cat][_name] == undefined))
+        if ((NUMBERS[_number] == undefined) || (NUMBERS[_number][_cat] == undefined) ||  (NUMBERS[_number][_cat][_name] == undefined)) {
             return;
+        }
 
         if (_optional) {
             document.getElementById(_cat+"_"+_name+"_enabled").checked = NUMBERS[_number][_cat][_name]["enabled"];
@@ -1845,6 +1998,7 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
                 document.getElementById(_cat+"_"+_name+"_value"+j).disabled = !NUMBERS[_number][_cat][_name]["enabled"];	
             }		
         }
+	    
         document.getElementById(_cat+"_"+_name+"_text").style.color = "black"
         setEnabled(_cat+"_"+_name, true);
 
@@ -1852,8 +2006,9 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
             let element = document.getElementById(_cat+"_"+_name+"_value"+j);
             if (element.tagName.toLowerCase() == "select") {
                 var textToFind = NUMBERS[_number][_cat][_name]["value"+j];
-                if (textToFind == undefined)
+                if (textToFind == undefined) {
                     continue;
+                }
 
                 _isFound = false;
                 element.selectedIndex = -1;
@@ -1864,8 +2019,7 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
                         break;
                     }
                 }
-                if (!_isFound)
-                {
+                if (!_isFound) {
                     _zw_txt = "In the selected field the value '" + textToFind + "' in the parameter '";
                     _zw_txt = _zw_txt + _cat + "' in the field '" + _name + "' is invalid. PLEASE CHECK BEFORE SAVING!";
                     firework.launch(_zw_txt, 'warning', 10000);
@@ -1893,8 +2047,9 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
             let element = document.getElementById(_cat+"_"+_name+"_value"+j);
             if (element.tagName.toLowerCase() == "select") {
                 var textToFind = _param[_cat][_name]["value"+j];
-                if (textToFind == undefined)
+                if (textToFind == undefined) {
                     continue;
+                }
                 
                 _isFound = false;
                 element.selectedIndex = -1;
@@ -1905,8 +2060,7 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
                         break;
                     }
                 }
-                if (!_isFound)
-                {
+                if (!_isFound) {
                     _zw_txt = "In the selected field the value '" + textToFind + "' in the section '";
                     _zw_txt = _zw_txt + _cat + "' in the field '" + _name + "' is invalid. PLEASE CHECK BEFORE SAVING!";
                     firework.launch(_zw_txt, 'warning', 10000);
@@ -1923,8 +2077,7 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
     }
 
     ///////////////// am Ende, falls Kategorie als gesamtes nicht ausgewählt --> deaktivieren
-    if (_category[_cat]["enabled"] == false) 
-    {
+    if (_category[_cat]["enabled"] == false) {
         if (_optional) {
             document.getElementById(_cat+"_"+_name+"_enabled").disabled = true;
             for (var j = 1; j <= anzpara; ++j) {
@@ -1939,12 +2092,12 @@ function WriteParameter(_param, _category, _cat, _name, _optional, _number = -1)
 }
 
 
-function InvertEnableItem(_cat, _param)
-{
+function InvertEnableItem(_cat, _param) {
     _zw = _cat + "_" + _param + "_enabled";
     _isOn = document.getElementById(_zw).checked;
 
     _color = "rgb(122, 122, 122)";
+	
     if (_isOn) {
         _color = "black";
     }
@@ -1956,8 +2109,8 @@ function InvertEnableItem(_cat, _param)
     setEnabled(_cat + "_" + _param, _isOn);
 
     for (var j = 1; j <= param[_cat][_param]["anzParam"]; ++j) {
-            document.getElementById(_cat+"_"+_param+"_value"+j).disabled = !_isOn;	
-            document.getElementById(_cat+"_"+_param+"_value"+j).style.color = _color;
+        document.getElementById(_cat+"_"+_param+"_value"+j).disabled = !_isOn;	
+        document.getElementById(_cat+"_"+_param+"_value"+j).style.color = _color;
     }
 }
 
@@ -1972,19 +2125,22 @@ function setEnabled(className, enabled) {
     for (i = 0; i < elements.length; i++) {
         if (enabled) {
             elements[i].classList.remove("disabled");
-        } else {
+        } 
+        else {
             elements[i].classList.add("disabled");
         }
 
         let inputs = elements[i].getElementsByTagName("input");
         for (j = 0; j < inputs.length; j++) {
-            if (inputs[j].id.endsWith("_enabled"))
+            if (inputs[j].id.endsWith("_enabled")) {
                 continue;
+            }
 
             inputs[j].style.color = _color;
             if (enabled) {
                 inputs[j].removeAttribute("disabled");
-            } else {
+            } 
+            else {
                 inputs[j].setAttribute("disabled", "disabled");
             }
         }
@@ -1997,15 +2153,15 @@ function setVisible(className, visible) {
     for (i = 0; i < elements.length; i++) {
         if (visible) {
             elements[i].classList.remove("hidden");
-        } else {
+        } 
+        else {
             elements[i].classList.add("hidden");
         }
     }
 }
 
 
-function EnDisableItem(_status, _param, _category, _cat, _name, _optional, _number = -1)
-{
+function EnDisableItem(_status, _param, _category, _cat, _name, _optional, _number = -1) {
     _status = _category[_cat]["enabled"];
 
     _color = "rgb(122, 122, 122)";
@@ -2018,18 +2174,18 @@ function EnDisableItem(_status, _param, _category, _cat, _name, _optional, _numb
         document.getElementById(_cat+"_"+_name+"_enabled").style.color = _color;	
     }
 
-    if (_number == -1){
+    if (_number == -1) {
         if (!_param[_cat][_name]["enabled"]) {
             _status = false;
             _color = "rgb(122, 122, 122)";
         }
     }
-    else
+    else {
         if (!NUMBERS[_number][_cat][_name]["enabled"]) {
-                _status = false;
-                _color = "rgb(122, 122, 122)";
-            }
-
+            _status = false;
+            _color = "rgb(122, 122, 122)";
+        }
+    }
 
     document.getElementById(_cat+"_"+_name+"_text").disabled = !_status;
     document.getElementById(_cat+"_"+_name+"_text").style.color = _color;
@@ -2037,22 +2193,25 @@ function EnDisableItem(_status, _param, _category, _cat, _name, _optional, _numb
     setEnabled(_cat+"_"+_name, _status);
 
     for (var j = 1; j <= _param[_cat][_name]["anzParam"]; ++j) {
-            document.getElementById(_cat+"_"+_name+"_value"+j).disabled = !_status;	
-            document.getElementById(_cat+"_"+_name+"_value"+j).style.color = _color;	
+        document.getElementById(_cat+"_"+_name+"_value"+j).disabled = !_status;	
+        document.getElementById(_cat+"_"+_name+"_value"+j).style.color = _color;	
     }
 }
 
 
-function ReadParameter(_param, _cat, _name, _optional, _number = -1){
+function ReadParameter(_param, _cat, _name, _optional, _number = -1) {
     if (_number > -1) {
-        if (_cat == "Digits")
+        if (_cat == "Digits") {
             _cat = "digit";
-        if (_cat == "Analog")
+        }
+	    
+        if (_cat == "Analog") {
             _cat = "analog";
+        }
 
-        if ((NUMBERS[_number] == undefined) || (NUMBERS[_number][_cat] == undefined) ||  (NUMBERS[_number][_cat][_name] == undefined))
+        if ((NUMBERS[_number] == undefined) || (NUMBERS[_number][_cat] == undefined) ||  (NUMBERS[_number][_cat][_name] == undefined)) {
             return;
-
+        }
 
         if (_optional) {
             NUMBERS[_number][_cat][_name]["enabled"] = document.getElementById(_cat+"_"+_name+"_enabled").checked;			
@@ -2070,7 +2229,8 @@ function ReadParameter(_param, _cat, _name, _optional, _number = -1){
                 if ((NUMBERS[_number][_cat][_name].checkRegExList != null) && (NUMBERS[_number][_cat][_name].checkRegExList[j-1] != null)) {
                     if (!element.value.match(NUMBERS[_cat][_name].checkRegExList[j-1])) {
                         element.classList.add("invalid-input");
-                    } else {
+                    } 
+                    else {
                         element.classList.remove("invalid-input");
                     }
                 }
@@ -2096,7 +2256,8 @@ function ReadParameter(_param, _cat, _name, _optional, _number = -1){
                 if ((_param[_cat][_name].checkRegExList != null) && (_param[_cat][_name].checkRegExList[j-1] != null)) {
                     if (!element.value.match(_param[_cat][_name].checkRegExList[j-1])) {
                         element.classList.add("invalid-input");
-                    } else {
+                    } 
+                    else {
                         element.classList.remove("invalid-input");
                     }
                 }
@@ -2107,10 +2268,8 @@ function ReadParameter(_param, _cat, _name, _optional, _number = -1){
 }
 
 
-function UpdateInputIndividual(sel)
-{
-    if (NUNBERSAkt != -1)
-    {
+function UpdateInputIndividual(sel) {
+    if (NUNBERSAkt != -1) {
         ReadParameter(param, "PostProcessing", "DecimalShift", true, NUNBERSAkt);
         ReadParameter(param, "PostProcessing", "AnalogDigitalTransitionStart", true, NUNBERSAkt);
         ReadParameter(param, "PostProcessing", "MaxRateValue", true, NUNBERSAkt);
@@ -2124,7 +2283,7 @@ function UpdateInputIndividual(sel)
         ReadParameter(param, "InfluxDBv2", "Measurement", true, NUNBERSAkt);
     }
 
-//	var sel = document.getElementById("Numbers_value1");
+    // var sel = document.getElementById("Numbers_value1");
     NUNBERSAkt = sel.selectedIndex;
     WriteParameter(param, category, "PostProcessing", "DecimalShift", true, NUNBERSAkt);
     WriteParameter(param, category, "PostProcessing", "AnalogDigitalTransitionStart", true, NUNBERSAkt);
@@ -2167,8 +2326,17 @@ function UpdateInput() {
     WriteParameter(param, category, "TakeImage", "Brightness", false);
     WriteParameter(param, category, "TakeImage", "Contrast", false);
     WriteParameter(param, category, "TakeImage", "Saturation", false);
+    WriteParameter(param, category, "TakeImage", "Sharpness", false);
     WriteParameter(param, category, "TakeImage", "LEDIntensity", false);
     WriteParameter(param, category, "TakeImage", "ImageSize", false);
+    WriteParameter(param, category, "TakeImage", "Zoom", false);
+    WriteParameter(param, category, "TakeImage", "ZoomMode", false);
+    WriteParameter(param, category, "TakeImage", "ZoomOffsetX", false);
+    WriteParameter(param, category, "TakeImage", "ZoomOffsetY", false);
+    WriteParameter(param, category, "TakeImage", "Grayscale", false);
+    WriteParameter(param, category, "TakeImage", "Negative", false);
+    WriteParameter(param, category, "TakeImage", "Aec2", false);
+    WriteParameter(param, category, "TakeImage", "AutoExposureLevel", false);
     WriteParameter(param, category, "TakeImage", "FixedExposure", false);
 
     WriteParameter(param, category, "Alignment", "SearchFieldX", false);		
@@ -2176,6 +2344,7 @@ function UpdateInput() {
     WriteParameter(param, category, "Alignment", "AlignmentAlgo", true);
     WriteParameter(param, category, "Alignment", "FlipImageSize", false);
     WriteParameter(param, category, "Alignment", "InitialMirror", false);			
+    WriteParameter(param, category, "Alignment", "InitialRotate", false);
 
     WriteParameter(param, category, "Digits", "CNNGoodThreshold", true);
     WriteParameter(param, category, "Digits", "ROIImagesLocation", true);		
@@ -2186,7 +2355,7 @@ function UpdateInput() {
     
     WriteParameter(param, category, "PostProcessing", "PreValueUse", false);		
     WriteParameter(param, category, "PostProcessing", "PreValueAgeStartup", true);		
-//	WriteParameter(param, category, "PostProcessing", "AllowNegativeRates", true);
+    // WriteParameter(param, category, "PostProcessing", "AllowNegativeRates", true);
     WriteParameter(param, category, "PostProcessing", "ErrorMessage", false);
     WriteParameter(param, category, "PostProcessing", "CheckDigitIncreaseConsistency", false);
 
@@ -2198,23 +2367,23 @@ function UpdateInput() {
     WriteParameter(param, category, "MQTT", "RetainMessages", false);
     WriteParameter(param, category, "MQTT", "HomeassistantDiscovery", false);
     WriteParameter(param, category, "MQTT", "MeterType", true);
-	WriteParameter(param, category, "MQTT", "CACert", true);
-	WriteParameter(param, category, "MQTT", "ClientCert", true);
-	WriteParameter(param, category, "MQTT", "ClientKey", true);
+    WriteParameter(param, category, "MQTT", "CACert", true);
+    WriteParameter(param, category, "MQTT", "ClientCert", true);
+    WriteParameter(param, category, "MQTT", "ClientKey", true);
     
     WriteParameter(param, category, "InfluxDB", "Uri", true);	
     WriteParameter(param, category, "InfluxDB", "Database", true);	
-//	WriteParameter(param, category, "InfluxDB", "Measurement", true);	
+    // WriteParameter(param, category, "InfluxDB", "Measurement", true);	
     WriteParameter(param, category, "InfluxDB", "user", true);	
     WriteParameter(param, category, "InfluxDB", "password", true);	
-//	WriteParameter(param, category, "InfluxDB", "Field", true);
+    // WriteParameter(param, category, "InfluxDB", "Field", true);
 
     WriteParameter(param, category, "InfluxDBv2", "Uri", true);	
     WriteParameter(param, category, "InfluxDBv2", "Bucket", true);	
-//	WriteParameter(param, category, "InfluxDBv2", "Measurement", true);	
+    // WriteParameter(param, category, "InfluxDBv2", "Measurement", true);	
     WriteParameter(param, category, "InfluxDBv2", "Org", true);	
     WriteParameter(param, category, "InfluxDBv2", "Token", true);	
-//	WriteParameter(param, category, "InfluxDBv2", "Field", true);
+    // WriteParameter(param, category, "InfluxDBv2", "Field", true);
 
     WriteParameter(param, category, "GPIO", "IO0", true);
     WriteParameter(param, category, "GPIO", "IO1", true);
@@ -2246,41 +2415,44 @@ function UpdateInput() {
 }
 
 
-function WriteModelFiles()
-{
+function WriteModelFiles() {
     list_tflite = getTFLITEList();
 
     var _indexDig = document.getElementById("Digits_Model_value1");
     var _indexAna = document.getElementById("Analog_Model_value1");
-    while (_indexDig.length)
+	
+    while (_indexDig.length) {
         _indexDig.remove(0);
-    while (_indexAna.length)
+    }
+	
+    while (_indexAna.length) {
         _indexAna.remove(0);
+    }
 
-    for (var i = 0; i < list_tflite.length; ++i){
+    for (var i = 0; i < list_tflite.length; ++i) {
         var optionDig = document.createElement("option");
         var optionAna = document.createElement("option");
         
         var text = list_tflite[i].replace("/config/", "");
         
         if (list_tflite[i].includes("/dig")) { // Its a digital file, only show in the digital list box
-        optionDig.text = text;
-        optionDig.value = list_tflite[i];
-        _indexDig.add(optionDig);
+            optionDig.text = text;
+            optionDig.value = list_tflite[i];
+            _indexDig.add(optionDig);
         }
         else if (list_tflite[i].includes("/ana")) { // Its a digital file, only show in the analog list box
-        optionAna.text = text;
-        optionAna.value = list_tflite[i];
-        _indexAna.add(optionAna);
+            optionAna.text = text;
+            optionAna.value = list_tflite[i];
+            _indexAna.add(optionAna);
         }
         else { // all other files, show in both list boxes
-        optionDig.text = text;
-        optionDig.value = list_tflite[i];
-        _indexDig.add(optionDig);
+            optionDig.text = text;
+            optionDig.value = list_tflite[i];
+            _indexDig.add(optionDig);
         
-        optionAna.text = text;
-        optionAna.value = list_tflite[i];
-        _indexAna.add(optionAna);
+            optionAna.text = text;
+            optionAna.value = list_tflite[i];
+            _indexAna.add(optionAna);
         }
     }
 
@@ -2289,8 +2461,7 @@ function WriteModelFiles()
 }
 
 
-function ReadParameterAll()
-{
+function ReadParameterAll() {
     category["Analog"]["enabled"] = document.getElementById("Category_Analog_enabled").checked;
     category["Digits"]["enabled"] = document.getElementById("Category_Digits_enabled").checked;
     category["MQTT"]["enabled"] = document.getElementById("Category_MQTT_enabled").checked;
@@ -2306,8 +2477,17 @@ function ReadParameterAll()
     ReadParameter(param, "TakeImage", "Brightness", false);
     ReadParameter(param, "TakeImage", "Contrast", false);
     ReadParameter(param, "TakeImage", "Saturation", false);
+    ReadParameter(param, "TakeImage", "Sharpness", false);
     ReadParameter(param, "TakeImage", "LEDIntensity", false);
     ReadParameter(param, "TakeImage", "ImageSize", false);
+    ReadParameter(param, "TakeImage", "Zoom", false);
+    ReadParameter(param, "TakeImage", "ZoomMode", false);
+    ReadParameter(param, "TakeImage", "ZoomOffsetX", false);
+    ReadParameter(param, "TakeImage", "ZoomOffsetY", false);
+    ReadParameter(param, "TakeImage", "Grayscale", false);
+    ReadParameter(param, "TakeImage", "Negative", false);
+    ReadParameter(param, "TakeImage", "Aec2", false);
+    ReadParameter(param, "TakeImage", "AutoExposureLevel", false);
     ReadParameter(param, "TakeImage", "FixedExposure", false);
 
     ReadParameter(param, "Alignment", "SearchFieldX", false);	
@@ -2315,6 +2495,7 @@ function ReadParameterAll()
     ReadParameter(param, "Alignment", "AlignmentAlgo", true);
     ReadParameter(param, "Alignment", "FlipImageSize", false);
     ReadParameter(param, "Alignment", "InitialMirror", false);
+    ReadParameter(param, "Alignment", "InitialRotate", false);
 
     ReadParameter(param, "Digits", "Model", false);
     ReadParameter(param, "Digits", "CNNGoodThreshold", true);
@@ -2338,9 +2519,9 @@ function ReadParameterAll()
     ReadParameter(param, "MQTT", "RetainMessages", false);
     ReadParameter(param, "MQTT", "HomeassistantDiscovery", false);
     ReadParameter(param, "MQTT", "MeterType", true);
-	ReadParameter(param, "MQTT", "CACert", true);
-	ReadParameter(param, "MQTT", "ClientCert", true);
-	ReadParameter(param, "MQTT", "ClientKey", true);
+    ReadParameter(param, "MQTT", "CACert", true);
+    ReadParameter(param, "MQTT", "ClientCert", true);
+    ReadParameter(param, "MQTT", "ClientKey", true);
 
     ReadParameter(param, "InfluxDB", "Uri", true);
     ReadParameter(param, "InfluxDB", "Database", true);
@@ -2353,7 +2534,7 @@ function ReadParameterAll()
     ReadParameter(param, "InfluxDBv2", "Measurement", true);
     ReadParameter(param, "InfluxDBv2", "Org", true);
     ReadParameter(param, "InfluxDBv2", "Token", true);
-//	ReadParameter(param, "InfluxDB", "Field", true);	
+    // ReadParameter(param, "InfluxDB", "Field", true);	
 
     ReadParameter(param, "GPIO", "IO0", true);
     ReadParameter(param, "GPIO", "IO1", true);
@@ -2391,7 +2572,7 @@ function ReadParameterAll()
     var sel = document.getElementById("Numbers_value1");
     UpdateInputIndividual(sel);
     
-//	FormatDecimalValue(param, "PostProcessing", "MaxRateValue");
+    // FormatDecimalValue(param, "PostProcessing", "MaxRateValue");
 }
 
 
@@ -2419,38 +2600,38 @@ function UpdateAfterCategoryCheck() {
 }
 
 
-function UpdateExpertModus()
-{
-//	var _style = 'display:none;';
+function UpdateExpertModus() {
+    // var _style = 'display:none;';
     var _style_pur = 'none';
     var _hidden = true;
     if (document.getElementById("ExpertModus_enabled").checked) {
-//		_style = '';
+        // _style = '';
         _style_pur = '';
         _hidden = false;
-        document.getElementById("Edit_Config_Direct").style.display = "";
+        document.getElementById("Button_Edit_Config_Raw").style.display = "";
         firework.launch("Expert view activated. Please use carefully", 'warning', 5000);
     }
-    else
-    {
-        document.getElementById("Edit_Config_Direct").style.display = "none"; 
+    else {
+        document.getElementById("Button_Edit_Config_Raw").style.display = "none"; 
     }
 
     const expert = document.querySelectorAll(".expert");
     for (var i = 0; i < expert.length; i++) {
         expert[i].style.display = _style_pur;
-//		document.getElementById(expert[i].id).style = _style;
+        // document.getElementById(expert[i].id).style = _style;
     }
 
     // Enable / Disable die Optionen in den Menues für die Auswahl. Falls kein Expertenmodus soll nur ein Wert (built-in-led oder externan-flash-ws281x) möglich sein
     Array.from(document.querySelector("#GPIO_IO4_value1").options).forEach(function(option_element) {
-        if (option_element.value != "built-in-led")
+        if (option_element.value != "built-in-led") {
             option_element.hidden = _hidden;
+        }
     });	
 
     Array.from(document.querySelector("#GPIO_IO12_value1").options).forEach(function(option_element) {
-        if (option_element.value != "external-flash-ws281x")
+        if (option_element.value != "external-flash-ws281x") {
             option_element.hidden = _hidden;
+        }
     });
 	
 	Array.from(document.querySelector("#GPIO_IO48_value1").options).forEach(function(option_element) {
@@ -2460,8 +2641,7 @@ function UpdateExpertModus()
 }
 
 
-function saveTextAsFile()
-{
+function saveTextAsFile() {
     ReadParameterAll();
     if (document.getElementsByClassName("invalid-input").length > 0) {
         firework.launch("Settings cannot be saved. Please check your entries!", 'danger', 30000);
@@ -2474,9 +2654,56 @@ function saveTextAsFile()
         SaveConfigToServer(domainname);
 
         firework.launch('Configuration saved. It will get applied after the next reboot!', 'success', 5000);
+
+        if (changeCamValue == 1) {
+            camSettingsSet(param);
+            firework.launch('You have changed the camera settings, so creating a new reference image and updating the alignment marks is mandatory!', 'success', 10000);		
+        }	    
     }
 }
 
+
+function camSettingsSet(_param) {
+    var domainname = getDomainname();
+    var xhttp = new XMLHttpRequest();
+			
+    var _grayscale = _param["TakeImage"]["Grayscale"].value1;
+    var _negative = _param["TakeImage"]["Negative"].value1;
+    var _aec2 = _param["TakeImage"]["Aec2"].value1;
+    var _FixedExposure = _param["TakeImage"]["FixedExposure"].value1;
+    var _zoom = _param["TakeImage"]["Zoom"].value1;
+
+    var _zm = _param["TakeImage"]["ZoomMode"].value1;
+    var _x = _param["TakeImage"]["ZoomOffsetX"].value1;
+    var _y = _param["TakeImage"]["ZoomOffsetY"].value1;
+    var _intensity = _param["TakeImage"]["LEDIntensity"].value1;
+    var _brightness = _param["TakeImage"]["Brightness"].value1;
+    var _contrast = _param["TakeImage"]["Contrast"].value1;
+    var _saturation = _param["TakeImage"]["Saturation"].value1;
+    var _sharpness = _param["TakeImage"]["Sharpness"].value1;
+    var _ae = _param["TakeImage"]["AutoExposureLevel"].value1;
+
+    var url = domainname + "/editflow?task=cam_settings";
+    url = url + "&bri=" + _brightness + "&con=" + _contrast + "&sat=" + _saturation + "&sh=" + _sharpness;
+    url = url + "&int=" + _intensity + "&gs=" + _grayscale + "&ne=" + _negative + "&z=" + _zoom;
+			
+    if (_zoom != '0') {
+        url = url + "&zm=" + _zm + "&x=" + _x + "&y=" + _y;
+    }
+    else {
+        url = url + "&zm=0" + "&x=0" + "&y=0";
+    }	
+				
+    url = url + "&ae=" + _ae + "&a2=" + _aec2;
+			
+    if (domainname.length > 0){
+        url = url + "&host=" + domainname;
+    }
+
+    xhttp.open("GET", url, true);
+    xhttp.send();			
+}
+	
 
 function doReboot() {
     if (confirm("Are you sure you want to reboot?")) {
@@ -2489,9 +2716,9 @@ function doReboot() {
 }
 
 
-function editConfigDirect() {
-    if (confirm("Proceed to switch the view? Unsaved changes get lost")) {
-        var stringota = getDomainname() + "/edit_config.html?v=$COMMIT_HASH";
+function editConfigRaw() {
+    if (confirm("Proceed to switch to raw edit mode? Unsaved changes will get lost")) {
+        var stringota = getDomainname() + "/edit_config_raw.html?v=$COMMIT_HASH";
         window.location = stringota;
         window.location.href = stringota;
         window.location.assign(stringota);
@@ -2500,58 +2727,61 @@ function editConfigDirect() {
 }
 
 
-function numberChanged()
-{
+function numberChanged() {
     var sel = document.getElementById("Numbers_value1");
     _neu = sel.selectedIndex;
     UpdateInputIndividual(sel);
 
     var _selInflux = document.getElementById("NumbersInfluxDBv2_value1");
-    if (_selInflux.selectedIndex != _neu)
+    if (_selInflux.selectedIndex != _neu) {
         _selInflux.selectedIndex = _neu
+    }
 }
 
     
-function numberInfluxDBv2Changed()
-{
+function numberInfluxDBv2Changed() {
     var sel = document.getElementById("NumbersInfluxDBv2_value1");
     _neu = sel.selectedIndex;
     UpdateInputIndividual(sel);
 
     var _sel2 = document.getElementById("Numbers_value1");
-    if (_sel2.selectedIndex != _neu)
+    if (_sel2.selectedIndex != _neu) {
         _sel2.selectedIndex = _neu
+    }
 
     var _sel3 = document.getElementById("NumbersInfluxDB_value1");
-    if (_sel3.selectedIndex != _neu)
+    if (_sel3.selectedIndex != _neu) {
         _sel3.selectedIndex = _neu
+    }
 }
 
 
-function numberInfluxDBChanged()
-{
+function numberInfluxDBChanged() {
     var sel = document.getElementById("NumbersInfluxDB_value1");
     _neu = sel.selectedIndex;
     UpdateInputIndividual(sel);
     
     var _sel2 = document.getElementById("Numbers_value1");
-    if (_sel2.selectedIndex != _neu)
+    if (_sel2.selectedIndex != _neu) {
         _sel2.selectedIndex = _neu
+    }
 
     var _sel3 = document.getElementById("NumbersInfluxDBv2_value1");
-    if (_sel3.selectedIndex != _neu)
+    if (_sel3.selectedIndex != _neu) {
         _sel3.selectedIndex = _neu
+    }
 }
 
-    /* hash #description open the details part of the page */
-function openDescription() 
-{
+	
+/* hash #description open the details part of the page */
+function openDescription() {
     if(window.location.hash) {
         var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
-        if(hash == 'description')
+        if(hash == 'description') {
             document.getElementById("desc_details").open = true;
-			document.getElementById("reboot").style.display = "none";
-			document.getElementById("reboot_text").style.display = "none";
+            document.getElementById("reboot").style.display = "none";
+            document.getElementById("reboot_text").style.display = "none";
+        }
     }
 }
 
