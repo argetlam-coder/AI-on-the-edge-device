@@ -13,3 +13,9 @@
 [submodule "code/components/RadioLib"]
 	path = code/components/RadioLib
 	url = https://github.com/jgromes/RadioLib
+[submodule "code/components/ArduinoJson"]
+	path = code/components/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson.git
+[submodule "code/components/CayenneLPP"]
+	path = code/components/CayenneLPP
+	url = https://github.com/argetlam-coder/CayenneLPP.git
