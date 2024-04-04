@@ -74,6 +74,10 @@
     static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in internal RAM
 #endif
 
+#ifdef ENABLE_LORAWAN
+#include "LoRaWAN_functions.h"
+#endif //ENABLE_LORAWAN
+
 extern const char* GIT_TAG;
 extern const char* GIT_REV;
 extern const char* GIT_BRANCH;
@@ -127,12 +131,14 @@ bool Init_NVS_SDCard()
     // connected on the bus. This is for debug / example purpose only.
     slot_config.flags |= SDMMC_SLOT_FLAG_INTERNAL_PULLUP;
 
+#ifndef BOARD_FREENOVE_ESP32_S3_WROOM
     // Der PullUp des GPIO13 wird durch slot_config.flags |= SDMMC_SLOT_FLAG_INTERNAL_PULLUP;
     // nicht gesetzt, da er eigentlich nicht benötigt wird, 
     // dies führt jedoch bei schlechten Kopien des AI_THINKER Boards
     // zu Problemen mit der SD Initialisierung und eventuell sogar zur reboot-loops.
     // Um diese Probleme zu kompensieren, wird der PullUp manuel gesetzt.
     gpio_set_pull_mode(GPIO_NUM_13, GPIO_PULLUP_ONLY); // HS2_D3	
+#endif
 
     // Options for mounting the filesystem.
     // If format_if_mount_failed is set to true, SD card will be partitioned and
@@ -508,6 +514,11 @@ extern "C" void app_main(void)
 
     ESP_LOGD(TAG, "Before reg server main");
     register_server_main_uri(server, "/sdcard");
+
+    // Initialize LoRaWAN module
+    #ifdef ENABLE_LORAWAN
+        lorawan_initialize();
+    #endif //ENABLE_LORAWAN
 
     // Only for testing purpose
     //setSystemStatusFlag(SYSTEM_STATUS_CAM_FB_BAD);
