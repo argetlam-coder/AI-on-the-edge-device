@@ -15,12 +15,12 @@
 static const char *LORAWAN_LOG_TAG = "LoRaWAN";
 
 // create a new instance of the HAL class
-EspHal* hal = new EspHal(42, 47, 41);
+EspHal* hal = new EspHal(14, 41, 47);
 
 // SX1262 has the following pin order:
 // Module(NSS/CS, DIO1, RESET, BUSY)
 // SX1262 radio = new Module(8, 14, 12, 13);
-SX1262 radio = new Module(hal, 1, 3,21,14);
+SX1262 radio = new Module(hal, 3, 21, 42, 1);
 
 // create the node instance on the EU-868 band
 // using the radio module and the encryption key
