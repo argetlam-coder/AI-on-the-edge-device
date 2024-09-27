@@ -108,19 +108,23 @@ bool Init_NVS_SDCard()
     // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
     sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
 
-    #ifdef BOARD_FREENOVE_ESP32_S3_WROOM
-        // SD card pins of the freenove
-        slot_config.clk = SDMMC_SLOT_PIN_CLK;
-        slot_config.cmd = SDMMC_SLOT_PIN_CMD;
-        slot_config.d0 = SDMMC_SLOT_PIN_D0;
-    #endif
+    // Set bus width to use:
+#ifdef __SD_USE_ONE_LINE_MODE__
+    slot_config.width = 1;
+#ifdef SOC_SDMMC_USE_GPIO_MATRIX
+    slot_config.clk = GPIO_SDCARD_CLK;
+    slot_config.cmd = GPIO_SDCARD_CMD;
+    slot_config.d0 = GPIO_SDCARD_D0;
+#endif
 
-   // Set bus width to use:
-   #ifdef __SD_USE_ONE_LINE_MODE__
-      slot_config.width = 1;
-   #else
-      slot_config.width = 4;
-   #endif
+#else
+    slot_config.width = 4;
+#ifdef SOC_SDMMC_USE_GPIO_MATRIX
+    slot_config.d1 = GPIO_SDCARD_D1;
+    slot_config.d2 = GPIO_SDCARD_D2;
+    slot_config.d3 = GPIO_SDCARD_D3;
+#endif
+#endif
 
     // Enable internal pullups on enabled pins. The internal pullups
     // are insufficient however, please make sure 10k external pullups are
