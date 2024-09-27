@@ -17,6 +17,9 @@
 	#include "ClassFlowInfluxDB.h"
 	#include "ClassFlowInfluxDBv2.h"
 #endif //ENABLE_INFLUXDB
+#ifdef ENABLE_WEBHOOK
+	#include "ClassFlowWebhook.h"
+#endif //ENABLE_WEBHOOK
 #include "ClassFlowCNNGeneral.h"
 
 class ClassFlowControll :
@@ -52,6 +55,7 @@ public:
 	string GetPrevalue(std::string _number = "");	
 	bool ReadParameter(FILE* pfile, string& aktparamgraph);	
 	string getJSON();
+	const std::vector<NumberPost*> &getNumbers();
 	string getNumbersName();
 
 	string TranslateAktstatus(std::string _input);
