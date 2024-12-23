@@ -96,7 +96,7 @@ std::string ClassFlowControll::TranslateAktstatus(std::string _input)
     }
 
     if (_input.compare("ClassFlowCNNGeneral") == 0) {
-        return ("Digitalization of ROIs");
+        return ("Digitization of ROIs");
     }
 
     #ifdef ENABLE_MQTT
@@ -126,10 +126,10 @@ std::string ClassFlowControll::TranslateAktstatus(std::string _input)
     return "Unkown Status";
 }
 
-std::vector<HTMLInfo*> ClassFlowControll::GetAllDigital() 
+std::vector<HTMLInfo*> ClassFlowControll::GetAllDigit() 
 {
     if (flowdigit) {
-        ESP_LOGD(TAG, "ClassFlowControll::GetAllDigital - flowdigit != NULL");
+        ESP_LOGD(TAG, "ClassFlowControll::GetAllDigit - flowdigit != NULL");
         return flowdigit->GetHTMLInfo();
     }
 
@@ -147,7 +147,7 @@ std::vector<HTMLInfo*> ClassFlowControll::GetAllAnalog()
     return empty;
 }
 
-t_CNNType ClassFlowControll::GetTypeDigital()
+t_CNNType ClassFlowControll::GetTypeDigit()
 {
     if (flowdigit) {
         return flowdigit->getCNNType();
@@ -166,7 +166,7 @@ t_CNNType ClassFlowControll::GetTypeAnalog()
 }
 
 #ifdef ALGROI_LOAD_FROM_MEM_AS_JPG
-void ClassFlowControll::DigitalDrawROI(CImageBasis *_zw)
+void ClassFlowControll::DigitDrawROI(CImageBasis *_zw)
 {
     if (flowdigit) {
         flowdigit->DrawROI(_zw);
@@ -196,7 +196,7 @@ bool ClassFlowControll::StartMQTTService()
 
 void ClassFlowControll::SetInitialParameter(void)
 {
-    AutoStart = false;
+    AutoStart = true;
     SetupModeActive = false;
     AutoInterval = 10; // Minutes
     flowdigit = NULL;
@@ -210,7 +210,8 @@ void ClassFlowControll::SetInitialParameter(void)
 
 bool ClassFlowControll::getIsAutoStart(void)
 {
-    return AutoStart;
+    //return AutoStart;
+    return true; // Flow must always be enabled, else the manual trigger (REST, MQTT) will not work!
 }
 
 
@@ -326,7 +327,7 @@ void ClassFlowControll::InitFlow(std::string config)
         // printf("Name: %s\n", cfc->name().c_str());
 	    
         if (cfc) {
-            ESP_LOGD(TAG, "Start ReadParameter (%s)", line.c_str());
+            ESP_LOGE(TAG, "Start ReadParameter (%s)", line.c_str());
             cfc->ReadParameter(pFile, line);
         }
         else {
@@ -557,10 +558,6 @@ bool ClassFlowControll::ReadParameter(FILE* pfile, string& aktparamgraph)
 
     while (this->getNextLine(pfile, &aktparamgraph) && !this->isNewParagraph(aktparamgraph)) {
         splitted = ZerlegeZeile(aktparamgraph, " =");
-	    
-        if ((toUpper(splitted[0]) == "AUTOSTART") && (splitted.size() > 1)) {
-            AutoStart = alphanumericToBoolean(splitted[1]);
-        }
 
         if ((toUpper(splitted[0]) == "INTERVAL") && (splitted.size() > 1)) {
             if (isStringNumeric(splitted[1]))
@@ -841,8 +838,8 @@ esp_err_t ClassFlowControll::GetJPGStream(std::string _fn, httpd_req_t *req)
     else {
         std::vector<HTMLInfo*> htmlinfo;
     
-        htmlinfo = GetAllDigital();
-        ESP_LOGD(TAG, "After getClassFlowControll::GetAllDigital");
+        htmlinfo = GetAllDigit();
+        ESP_LOGD(TAG, "After getClassFlowControll::GetAllDigit");
 
         for (int i = 0; i < htmlinfo.size(); ++i)
         {
