@@ -69,6 +69,30 @@
         return "";
         }        
     </script>
+    <style>
+        /* Add these styles to your existing CSS file or in a <style> tag in the head */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #d8d8d8;
+            margin-top: 20px;
+        }
+        .footer-section {
+            display: flex;
+            align-items: center;
+        }
+        .footer-section img {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        .donation-cards img {
+            height: 20px;
+            margin-right: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -78,7 +102,7 @@
     <tr>
         <td style="padding-right: 10px;"><img style="width:64px; height:64px" src="favicon.ico?v=$COMMIT_HASH"></td>
         <td><h1 id="id_title"> Digitizer - AI on the edge</h1>
-            <h2>An ESP32 all inclusive neural network recognition system for meter digitalization</h2>
+            <h2>An ESP32 all inclusive neural network recognition system for meter Digitization</h2>
         </td>
     </tr>
 </table>
@@ -134,9 +158,9 @@
         </ul>
     </li>
     <li id="ManualControl" style="display:none;"><a>Manual Control <i class="arrow down"></i></a> <!-- Workaround: Hide menu if no entry is available -->
-        <ul class="submenu">
-            <!--<li><a href="#" onclick="flow_start()">Start Round</a></li>--> <!-- Needs to be adapted on code side first to ensure proper user feedback -->
-            <li id="HASendDiscovery" style="display:none;"><a href="#" onclick="HA_send_discovery()">Resend HA Discovery</a></li>
+        <ul class="submenu" style="width: 300px">
+            <li><a href="#" onclick="flow_start()">Start Round</a></li>
+            <li id="HASendDiscovery" style="width: 300px" style="display:none;"><a href="#" onclick="HA_send_discovery()">Resend Homeassistant Discovery</a></li>
         </ul>
     </li>
   </ul>
@@ -145,6 +169,28 @@
 <iframe title="maincontent" name="maincontent" class="iframe" id="maincontent"></iframe>
 
 <span id="Version" style="font-size: 10px; margin-top: -5px;padding-left: 10px;">Loading version...</span>
+
+<!-- # Disabled footer, since it wastes a lot of space and the images are broken
+<div class="footer">
+    <div class="footer-section">
+       <span>Support & Contact Us</span>
+       <a href="https://github.com/jomjol/AI-on-the-edge-device" target="_blank" title="GitHub">
+          <img src="https://github.com/jomjol/AI-on-the-edge-device/images/github-logo.png" alt="GitHub">
+       </a>
+          <img src="https://github.com/jomjol/AI-on-the-edge-device/images/gmail-logo.png" alt="Email">
+       </a>
+       <a href="https://github.com/jomjol/AI-on-the-edge-device/discussions" target="_blank" title="GitHub">
+          <img src="https://github.com/jomjol/AI-on-the-edge-device/images/discussion-logo" alt="GitHub">
+       </a>
+	
+    </div>
+    <div class="footer-section">
+       <span>Donations</span>
+       <a href="https://www.paypal.com/donate?hosted_button_id=8TRSVYNYKDSWL" target="_blank" title="Donate via PayPal">
+          <img src="https://github.com/jomjol/AI-on-the-edge-device/images/paypal.png" alt="PayPal" style="width: 60px; height: auto;">
+       </a>
+    </div>
+ </div> -->
 
 <script type="text/javascript">
     LoadHostname();
@@ -158,13 +204,14 @@
     console.log("Loading page: " + getCookie("page"));
     document.getElementById('maincontent').src = getCookie("page");
 
-    /*
+    
     function flow_start() {
     var url = getDomainname() + '/flow_start'; 
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
-				if (xhttp.responseText.substring(0,3) == "001") {
+                firework.launch(xhttp.responseText, 'success', 5000);
+			    /*if (xhttp.responseText.substring(0,3) == "001") {
 					firework.launch('Flow start triggered', 'success', 5000);
                     window.location.reload();
 				}
@@ -173,13 +220,13 @@
 				}
 				else if (xhttp.responseText.substring(0,3) == "099") {
 					firework.launch('Flow start triggered, but start not possible (no flow task available)', 'danger', 5000);
-				}
+                }*/
 			}
 		}
 		xhttp.open("GET", url, true);
 		xhttp.send();
     }
-    */
+    
 
     function HA_send_discovery_visibility()	{
 		loadConfig(domainname); 
@@ -187,19 +234,19 @@
 		category = getConfigCategory();
         param = getConfigParameters();
 		
-		if (category["MQTT"]["enabled"] && param["MQTT"]["HomeassistantDiscovery"].value == "true") {
+		if (category["MQTT"]["enabled"] && param["MQTT"]["HomeassistantDiscovery"].value1 == "true") {
             document.getElementById("ManualControl").style.display="";
             document.getElementById("HASendDiscovery").style.display="";
         }
 	}
 
     function HA_send_discovery() {
-    console.log("HA Discovery scheduled");
+    console.log("Homeassistant Discovery topic sending scheduled");
     var url = getDomainname() + '/mqtt_publish_discovery'; 
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
-				firework.launch('Sending HA discovery topics scheduled. The sending will be processed in state "Publish to MQTT"', 'success', 5000);
+				firework.launch('Sending Homeassistant discovery topics scheduled. It will get sent in the step "Publish to MQTT" of the next digitization round', 'success', 5000);
 			}
 		}
 		xhttp.open("GET", url, true);

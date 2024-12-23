@@ -1,15 +1,119 @@
-## [update] - 2024-03-30
+## [16.0.0-RC5] - 2024-12-05
 
-For a full list of changes see [Full list of changes](https://github.com/jomjol/AI-on-the-edge-device/compare/v15.6.0...v15.7.0)
+For a full list of changes see [Full list of changes](https://github.com/jomjol/AI-on-the-edge-device/compare/v15.7.0...v16.0.0)
+
+#### Known issues
+Please check the [issues](https://github.com/jomjol/AI-on-the-edge-device/issues) and
+[discussions](https://github.com/jomjol/AI-on-the-edge-device/discussions) before reporting a new issue.
 
 #### Core Changes
+Only changes since RC4 are listed:
+- Removed `Autostart` parameter and make the flow to be always enabled (#3423)
+- Enable `Flow start` menu entry in UI (#3423)
+- Updated the Homeassistant Discovery topics (#3332):
+    - `raw` has now set the `State Class` to `measurement`. Before it was always set to `""`. 
+    - `value` has now only set the `State Class` to `total_increasing` if the parameter `Allow Negative Rates` is **not** set. Else it uses `measurement` since the rate could also be negative. Before it was always set to `total_increasing`.
+    - The `rate_per_time_unit` topic of an **Energy** meter needs a `Device Class`=`power`. For `gas` and `water` it should be `volume_flow_rate`. Before it was always set to `""`.
+    - Added button for `flow start` (#3415)
+    - Added support for Domoticz MQTT integration (#3359)
+    - Added Date and time to overview page
+    - Updated submodules and models
 
-- New tflite-Model for Analog (v13.0.0)
-- New tflite-Model for Digital Hybrid (v7.0.0)
+  **:warning: Please check your Homeassistant instance to make sure it is handled correctly!**
 
 #### Bug Fixes
+Only changes since RC3 are listed:
+ - Added fix for ledintensity (#3418)
+ - Added fix for OV2640 brightness contrast saturation (#3417)
+ - Added fix for 'AnalogToDigitTransitionStart' always using 9.2 regardless of the configured value (#3393)
+ - Addef fix for HA menu entry (#3342)
 
-- tbd
+
+## [16.0.0-RC4] - 2024-10-06
+
+For a full list of changes see [Full list of changes](https://github.com/jomjol/AI-on-the-edge-device/compare/v15.7.0...v16.0.0-RC1)
+
+#### Known issues
+Please check the [issues](https://github.com/jomjol/AI-on-the-edge-device/issues) and
+[discussions](https://github.com/jomjol/AI-on-the-edge-device/discussions) before reporting a new issue.
+
+#### Core Changes
+Only changes since RC3 are listed:
+- Update esp32-camera submodule to `v2.0.13` (#3316)
+- Added contributor list (#3317)
+- Added files for demo mode (#3315)
+
+#### Bug Fixes
+Only changes since RC2 are listed:
+- Added delay in InitCam (#3313) to fix `Camera not detected` issues
+
+
+## [16.0.0-RC3] - 2024-10-05
+
+For a full list of changes see [Full list of changes](https://github.com/jomjol/AI-on-the-edge-device/compare/v15.7.0...v16.0.0-RC1)
+
+#### Known issues
+Please check the [issues](https://github.com/jomjol/AI-on-the-edge-device/issues) and
+[discussions](https://github.com/jomjol/AI-on-the-edge-device/discussions) before reporting a new issue.
+
+#### Core Changes
+Only changes since RC2 are listed:
+- Renamed MQTT topic from `rate_per_digitalization_round` to `rate_per_digitization_round` (change happened already in RC1)
+
+#### Bug Fixes
+Only changes since RC2 are listed:
+- Re-did revertion of TFlite submodule update as certain modules crash with it (#3269) (change was lost)
+
+
+## [16.0.0-RC2] - 2024-10-04
+
+For a full list of changes see [Full list of changes](https://github.com/jomjol/AI-on-the-edge-device/compare/v15.7.0...v16.0.0-RC1)
+
+#### Known issues
+Please check the [issues](https://github.com/jomjol/AI-on-the-edge-device/issues) and
+[discussions](https://github.com/jomjol/AI-on-the-edge-device/discussions) before reporting a new issue.
+
+#### Core Changes
+Only changes since RC1 are listed:
+- Updated parameter documentation pages
+- Rename/remove unused parameters (#3291)
+- Migrate-cam-parameters (#3288)
+
+#### Bug Fixes
+Only changes since RC1 are listed:
+- Reverted TFlite submodule update as certain modules crash with it (#3269)
+- Changed the webhook UploadImg to false (#3279)
+- Changed default value from boolean to numeric value in parameter camDenoise documentation
+- Updated config page
+
+## [16.0.0-RC1] - 2024-09-24
+
+For a full list of changes see [Full list of changes](https://github.com/jomjol/AI-on-the-edge-device/compare/v15.7.0...v16.0.0-RC1)
+
+#### Known issues
+Please check the [issues](https://github.com/jomjol/AI-on-the-edge-device/issues) and
+[discussions](https://github.com/jomjol/AI-on-the-edge-device/discussions) before reporting a new issue.
+
+#### Core Changes
+Those are just the major changes:
+- Add support for OV5640 camera (#3063)
+- New tflite-Models
+- Homeassistant service discovery: derive node_id when using nested topics (#3088)
+- Added Prometheus/OpenMetrics exporter (#3081)
+- Added Webhook (#3148, #3163, #3174)
+- Add rate threshold parameter (#3195)
+- Added a Delay between the WiFi reconnections (#3068)
+- Web UI improvements
+- Various minor changes
+- Update platformIO to 6.9.0 (Contains ESP IDF 5.3.1)
+
+#### Bug Fixes
+Those are just the major changes:
+- Handle crash on corrupted model (#3220)
+- Bugfix for boot loop (#3175)
+- Bugfix for time stamp (#3180)
+- Handle empty prevalue.ini gracefully (#3162)
+- Added note about only TLS 1.2 is supported (#3213)
 
 ## [15.7.0] - 2024-02-17
 
@@ -23,7 +127,7 @@ For a full list of changes see [Full list of changes](https://github.com/jomjol/
 - Add Firmware Version to MQTT
 
 #### Bug Fixes
-- Reverted "Implemented late analog / digital transition [#2778](https://github.com/jomjol/AI-on-the-edge-device/pull/2778) (introduced in `v15.5`) as is seems to cause issues for many users.
+- Reverted "Implemented late analog / digit transition [#2778](https://github.com/jomjol/AI-on-the-edge-device/pull/2778) (introduced in `v15.5`) as is seems to cause issues for many users.
 
 
 ## [15.6.0] - 2024-02-09
@@ -42,7 +146,7 @@ For a full list of changes see [Full list of changes](https://github.com/jomjol/
 
  - Update PlattformIO to v6.5.0, which means esp-idf to v5.1
  - Enhance busy notification
- - Implemented late analog / digital transition
+ - Implemented late analog / digit transition
 
 #### Fixed
 
@@ -202,7 +306,7 @@ For a full list of changes see [Full list of changes](https://github.com/jomjol/
   :bangbang: **Attention:** Update your configuration!
     -   Hybrid CNN network to `dig-cont_0611_s3` 
     -   Analog CNN network to `ana-cont-11.0.5` and `ana-clas100-1.5.7`
-    -   Digital CNN network to `dig-class100-1.6.0`
+    -   Digit CNN network to `dig-class100-1.6.0`
 -   Various Web interface Improvements/Enhancements:
     - Restructured Menu (Needs cache clearing to be applied)
     - Enhanced `Previous Value` page
@@ -338,7 +442,7 @@ For a full list of changes see [Full list of changes](https://github.com/jomjol/
 -   Improved OTA Update mechanism (only working after installation for next update)
 -   Added data logging in `/log/data` - One day per file and each measurement is on one line
     -   Format: csv - comma separated
-    -   Content: `time`, `name-of-number`, `raw-value`, `return-value`, `pre-value`, `change-rate`, `change-absolute`, `error-text`, `cnn-digital`, `cnn-analog`
+    -   Content: `time`, `name-of-number`, `raw-value`, `return-value`, `pre-value`, `change-rate`, `change-absolute`, `error-text`, `cnn-digit`, `cnn-analog`
 -   Show graph of values direct in the user interface (thanks to [@rdmueller](https://github.com/rdmueller))
 
     -   Using new data logging (see above)
@@ -356,10 +460,10 @@ For a full list of changes see [Full list of changes](https://github.com/jomjol/
 -   Updated OTA functionality (more robust, but not fully bullet prove yet)
 -   Updated Espressif library to `espressif32@v5.2.0`
 -   [#1176](https://github.com/jomjol/AI-on-the-edge-device/discussions/1176) accept minor negative values (-0.2) if extended resolution is enabled
--   [#1143](https://github.com/jomjol/AI-on-the-edge-device/issues/1143) added config parameter `AnalogDigitalTransitionStart`. It can setup very early and very late digit transition starts.
+-   [#1143](https://github.com/jomjol/AI-on-the-edge-device/issues/1143) added config parameter `AnalogDigTransitionStart`. It can setup very early and very late digit transition starts.
 -   New version of `dig-class100` (v1.4.0): added images of heliowatt powermeter 
 -   NEW v13.0.2: Update Tool "Logfile downloader and combiner" to handle the new csv file format.
--   NEW v13.0.2: MQTT: Added MQTT topic `status` (Digitalization Status), Timezone to MQTT topic `timestamp`.#
+-   NEW v13.0.2: MQTT: Added MQTT topic `status` (Digitization Status), Timezone to MQTT topic `timestamp`.#
 -   NEW v13.0.2: Logging: Disable heap logs by default, cleanup
 -   NEW v13.0.7:
     -   log NTP server name
@@ -484,7 +588,7 @@ Intermediate Digits
 
 -   Updated analog neural network file (`ana-cont_11.3.0_s2.tflite` - default, `ana-class100_0120_s1_q.tflite`)
 
--   Updated digital neural network file (`dig-cont_0570_s3.tflite` - default, `dig-class100_0120_s2_q.tflite`)
+-   Updated digit neural network file (`dig-cont_0570_s3.tflite` - default, `dig-class100_0120_s2_q.tflite`)
 
 -   Added automated filtering of tflite-file in the graphical configuration (thanks to @**[caco3](https://github.com/caco3)**)
 
@@ -496,8 +600,8 @@ Intermediate Digits
 
 Intermediate Digits
 
--   New and improved consistency check (especially with analog and digital counters mixed)
--   Bug Fix: digital counter algorithm
+-   New and improved consistency check (especially with analog and digit counters mixed)
+-   Bug Fix: digit counter algorithm
 
 ## [11.0.1](https://github.com/jomjol/AI-on-the-edge-device/releases/tag/v11.0.1), 2022-08-18
 
@@ -508,16 +612,16 @@ Intermediate Digits
 -   Implementation of new CNN types to detect intermediate values of digits with rolling numbers
 
     -   By default the old algo (0, 1, ..., 9, "N") is active (due to the limited types of digits trained so far)
-    -   Activation can be done by selection a tflite file with the new trained model in the 'config.ini'
+    -   Activation can be done by selecting a tflite file with the new trained model in the 'config.ini'
     -   **Details can be found in the [wiki](https://github.com/jomjol/AI-on-the-edge-device/wiki/Neural-Network-Types)** (different types, trained image types, naming convention)
 
--   Updated  neural network files (and adaption to new naming convention)
+-   Updated  neural network files (and adaptation to new naming convention)
 
--   Published a tool to download and combine log files - **Thanks to **
+-   Published a tool to download and combine log files - Thanks to [Contributor]
 
     -   Files see ['/tools/logfile-tool'](tbd), How-to see [wiki](https://github.com/jomjol/AI-on-the-edge-device/wiki/Gasmeter-Log-Downloader)
 
--   Bug Fix: InfluxDB enabling in grahic configuration
+-   Bug Fix: InfluxDB enabling in graphic configuration
 
 ## [10.6.2](https://github.com/jomjol/AI-on-the-edge-device/releases/tag/v10.6.2), 2022-07-24
 
@@ -531,13 +635,13 @@ Stability Increase
 
 -   **NEW 10.6.1**: Bug Fix: tflite-filename with ".", HTML spelling error
 
--   IndluxDB: direct injection into InfluxDB - thanks to **[wetneb](https://github.com/wetneb)**
+-   InfluxDB: direct injection into InfluxDB - thanks to **[wetneb](https://github.com/wetneb)**
 
 -   MQTT: implemented "Retain Flag" and extend with absolute Change (in addition to rate)
 
 -   `config.ini`: removal of modelsize (readout from tflite)
 
--   Updated analog neural network file (`ana1000s2.tflite`) & digital neural network file (`dig1400s2q.tflite`)
+-   Updated analog neural network file (`ana1000s2.tflite`) & digit neural network file (`dig1400s2q.tflite`)
 
 -   TFMicro/Lite: Update (espressif Version 20220716)
 
@@ -573,7 +677,7 @@ Stability Increase
     -   In the future the new files will also be copied to the `firmware` directory of the repository
 -   Added Wifi RSSI to MQTT information
 -   Updated analog neural network file (`ana-s3-q-20220105.tflite`)
--   Updated digital neural network file (`dig-s1-q-20220102.tflite`)
+-   Updated digit neural network file (`dig-s1-q-20220102.tflite`)
 -   Updated build environment to `Espressif 3.5.0`
 
 ## [10.3.0] - (2022-01-29)
@@ -639,7 +743,7 @@ Stability Increase
 
 -   Update analog neural network (ana-s3-q-20220105.tflite)
 
--   Update digital neural network (dig-s1-q-20220102.tflite)
+-   Update digit neural network (dig-s1-q-20220102.tflite)
 
 -   Increased web-server buffers
 
@@ -676,7 +780,7 @@ External Illumination
 -   Direct JSON access: `http://IP-ADRESS/json`
 -   Error message in log file in case camera error during startup
 -   Upgrade analog CNN to v9.1.0
--   Upgrade digital CNN to v13.3.0 (added new images)
+-   Upgrade digit CNN to v13.3.0 (added new images)
 -   html: support of different ports
 
 ## [9.1.1] - External Illumination (2021-11-16)
@@ -701,7 +805,7 @@ External Illumination
 
 ### Changed
 
--   Upgrade digital CNN to v13.1.0 (added new images)
+-   Upgrade digit CNN to v13.1.0 (added new images)
 -   bug fix: wlan password with space, double digit output
 
 ## [8.4.0] - Multi Meter Support (2021-09-25)
@@ -731,7 +835,7 @@ External Illumination
 
 ### Changed
 
--   Upgrade digital CNN to v12.1.0 (added new images)
+-   Upgrade digit CNN to v12.1.0 (added new images)
 -   Dedicated NaN handling, internal refactoring (CNN-Handling)
 -   HTML: confirmation after config.ini update
 -   Bug fixing
@@ -753,7 +857,7 @@ External Illumination
 -   GPIO: using the general mqtt main topic for GPIO
 
 
--   Upgrade digital CNN to v12.0.0  (added new images)
+-   Upgrade digit CNN to v12.0.0  (added new images)
 -   Update tfmicro to new master (2021-08-07)
 -   Bug fix: remove text in mqtt value, remove connect limit in wlan reconnet
 
@@ -789,7 +893,7 @@ External Illumination
 
 -   Update wlan handling to esp-idf 4.1
 
--   Upgrade digital CNN to v8.7.0  (added new images)
+-   Upgrade digit CNN to v8.7.0  (added new images)
 
 -   Bug fix: MQTT, WLAN, LED-Controll, GPIO usage, fixed IP, calculation flow rate
 
@@ -800,7 +904,7 @@ External Illumination
 -   NEW: 7.0.1: bug fix wlan password with "="
 
 
--   Upgrade digital CNN to v8.5.0  (added new images)
+-   Upgrade digit CNN to v8.5.0  (added new images)
 
 -   New MQTT topics: flow rate (units/minute), time stamp (last correct read readout)
 
@@ -817,7 +921,7 @@ External Illumination
 
 -   NEW 6.7.1: Improved stability of camera (back to v6.6.1) - remove black strips and areas
 
--   Upgrade digital CNN to v8.3.0  (added new type of digits)
+-   Upgrade digit CNN to v8.3.0  (added new type of digits)
 
 -   Internal update: TFlite (v2.5), esp32cam, startup sequence
 
@@ -838,7 +942,7 @@ External Illumination
 
 ### Changed
 
--   Upgrade digital CNN to v8.2.0  (added new type of digits)
+-   Upgrade digit CNN to v8.2.0  (added new type of digits)
 
 
 -   Supporting alignment structures in ROI definition
@@ -874,7 +978,7 @@ External Illumination
 
 -   Determination of fixed illumination settings during startup - speed up of 5s in each run
 
--   Update digital CNN to v8.1.1 (additional digital images trained)
+-   Update digit CNN to v8.1.1 (additional digit images trained)
 
 -   Extended error message in MQTT error message
 
@@ -886,7 +990,7 @@ External Illumination
 
 ### Changed
 
--   Disabling of analog / digital counters in configuration
+-   Disabling of analog / digit counters in configuration
 
 
 -   Improved Alignment Algorithm (`AlignmentAlgo`  = `Default`,  `Accurate` , `Fast`)
@@ -906,7 +1010,7 @@ External Illumination
 
 -   MQTT: Last Will Testament (LWT) implemented: "connection lost" in case of connection lost to `TopicError`
 -   Disabled `CheckDigitIncreaseConsistency` in default configuration - must now be explicit enabled if needed
--   Update digital CNN to v7.2.1 (additional digital images trained)
+-   Update digit CNN to v7.2.1 (additional digit images trained)
 -   Setting of arbitrary time server in `config.ini`
 -   Option for fixed IP-, DNS-Settings in `wlan.ini`
 -   Increased stability (internal image and camera handling)
@@ -940,7 +1044,7 @@ External Illumination
 
 -   standardized access to current logfile via `http://IP-ADRESS/logfileact`
 
--   Update digital CNN to v7.2.0, analog CNN to 6.3.0
+-   Update digit CNN to v7.2.0, analog CNN to 6.3.0
 
 -   Bug fixing: truncation error,  CheckDigitConsistency & PreValue implementation
 
@@ -959,7 +1063,7 @@ External Illumination
 
 ### Changed
 
--   Update digital CNN to v6.5.0 and HTML (Info to hostname, IP, ssid)
+-   Update digit CNN to v6.5.0 and HTML (Info to hostname, IP, ssid)
 
 -   New implementation of "checkDigitConsistency" also for digits
 
@@ -1046,7 +1150,7 @@ External Illumination
 -   Bug in configuration of analog ROIs corrected
 
 
--   minor bug correction
+-   minor Bug correction
 
 ## [1.0.1](2020-09-05)
 
@@ -1055,7 +1159,7 @@ External Illumination
 -   preValue.ini Bug corrected
 
 
--   minor bug correction
+-   minor Bug correction
 
 ## [1.0.0](2020-09-04)
 
