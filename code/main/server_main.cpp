@@ -357,7 +357,7 @@ esp_err_t img_tmp_virtual_handler(httpd_req_t *req)
     if (filetosend == "raw.jpg")
         return GetRawJPG(req); 
 
-    // Serve alg.jpg, alg_roi.jpg or digital and analog ROIs
+    // Serve alg.jpg, alg_roi.jpg or digit and analog ROIs
     if (ESP_OK == GetJPG(filetosend, req))
         return ESP_OK;
 
@@ -459,7 +459,7 @@ httpd_handle_t start_webserver(void)
     config.server_port = 80;
     config.ctrl_port = 32768;
     config.max_open_sockets = 5; //20210921 --> previously 7   
-    config.max_uri_handlers = 40; // Make sure this fits all URI handlers. Memory usage in bytes: 6*max_uri_handlers
+    config.max_uri_handlers = 41; // Make sure this fits all URI handlers. Memory usage in bytes: 6*max_uri_handlers
     config.max_resp_headers = 8;                        
     config.backlog_conn = 5;                        
     config.lru_purge_enable = true; // this cuts old connections if new ones are needed.               

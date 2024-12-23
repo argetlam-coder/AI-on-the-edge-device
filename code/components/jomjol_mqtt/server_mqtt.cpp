@@ -32,8 +32,9 @@ std::string rateUnit = "Unit/Minute";
 float roundInterval; // Minutes
 int keepAlive = 0; // Seconds
 bool retainFlag;
-static std::string maintopic;
+static std::string maintopic, domoticzintopic;
 bool sendingOf_DiscoveryAndStaticTopics_scheduled = true; // Set it to true to make sure it gets sent at least once after startup
+
 
 
 void mqttServer_setParameter(std::vector<NumberPost*>* _NUMBERS, int _keepAlive, float _roundInterval) {
@@ -85,8 +86,11 @@ bool sendHomeAssistantDiscoveryTopic(std::string group, std::string field,
      * This means a maintopic "home/test/watermeter" is transformed to the discovery topic "homeassistant/sensor/watermeter/..."
     */
     std::string node_id = createNodeId(maintopic);
-    if (field == "problem") { // Special binary sensor which is based on error topic
+    if (field == "problem") { // Special case: Binary sensor which is based on error topic
         topicFull = "homeassistant/binary_sensor/" + node_id + "/" + configTopic + "/config";
+    }
+    else if (field == "flowstart") { // Special case: Button
+        topicFull = "homeassistant/button/" + node_id + "/" + configTopic + "/config";
     }
     else {
         topicFull = "homeassistant/sensor/" + node_id + "/" + configTopic + "/config";
@@ -101,7 +105,7 @@ bool sendHomeAssistantDiscoveryTopic(std::string group, std::string field,
         "\"icon\": \"mdi:" + icon + "\",";        
 
     if (group != "") {
-        if (field == "problem") { // Special binary sensor which is based on error topic
+        if (field == "problem") { // Special case: Binary sensor which is based on error topic
             payload += "\"state_topic\": \"~/" + group + "/error\",";
             payload += "\"value_template\": \"{{ 'OFF' if 'no error' in value else 'ON'}}\",";
         }
@@ -110,9 +114,12 @@ bool sendHomeAssistantDiscoveryTopic(std::string group, std::string field,
         }
     }
     else {
-        if (field == "problem") { // Special binary sensor which is based on error topic
+        if (field == "problem") { // Special case: Binary sensor which is based on error topic
             payload += "\"state_topic\": \"~/error\",";
             payload += "\"value_template\": \"{{ 'OFF' if 'no error' in value else 'ON'}}\",";
+        }
+        else if (field == "flowstart") { // Special case: Button
+            payload += "\"cmd_t\":\"~/ctrl/flow_start\","; // Add command topic
         }
         else {
             payload += "\"state_topic\": \"~/" + field + "\",";
@@ -176,6 +183,7 @@ bool MQTThomeassistantDiscovery(int qos) {
     allSendsSuccessed |= sendHomeAssistantDiscoveryTopic("",     "interval",        "Interval",          "clock-time-eight-outline", "min",  ""           ,    "measurement", "diagnostic", qos);
     allSendsSuccessed |= sendHomeAssistantDiscoveryTopic("",     "IP",              "IP",                "network-outline",           "",    "",               "",            "diagnostic", qos);
     allSendsSuccessed |= sendHomeAssistantDiscoveryTopic("",     "status",          "Status",            "list-status",               "",    "",               "",            "diagnostic", qos);
+    allSendsSuccessed |= sendHomeAssistantDiscoveryTopic("",     "flowstart",       "Manual Flow Start", "timer-play-outline",        "",    "",               "",            "",           qos);
 
 
     for (int i = 0; i < (*NUMBERS).size(); ++i) {
@@ -184,14 +192,26 @@ bool MQTThomeassistantDiscovery(int qos) {
             group = "";
         }
 
+        /* If "Allow neg. rate" is true, use "measurement" instead of "total_increasing" for the State Class, see https://github.com/jomjol/AI-on-the-edge-device/issues/3331 */
+        std::string value_state_class = "total_increasing";
+        if ((*NUMBERS)[i]->AllowNegativeRates) {
+            value_state_class = "measurement";
+        }
+
+        /* Energy meters need a different Device Class, see https://github.com/jomjol/AI-on-the-edge-device/issues/3333 */
+        std::string rate_device_class = "volume_flow_rate";
+        if (meterType == "energy") {
+            rate_device_class = "power";
+        }
+
     //                                                       Group | Field                          | User Friendly Name                | Icon                   | Unit                 | Device Class | State Class       | Entity Category
-        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "value",                      "Value",                            "gauge",                 valueUnit,             meterType,      "total_increasing", "", qos);
-        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "raw",                        "Raw Value",                        "raw",                   "",                    "",             "",                 "diagnostic", qos);
+        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "value",                      "Value",                            "gauge",                 valueUnit,             meterType,      value_state_class, "", qos); // State Class = "total_increasing" if <NUMBERS>.AllowNegativeRates = false, else use "measurement"
+        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "raw",                        "Raw Value",                        "raw",                   valueUnit,             meterType,      "measurement",      "diagnostic", qos);
         allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "error",                      "Error",                            "alert-circle-outline",  "",                    "",             "",                 "diagnostic", qos);
-        /* Not announcing "rate" as it is better to use rate_per_time_unit resp. rate_per_digitalization_round */
+        /* Not announcing "rate" as it is better to use rate_per_time_unit resp. rate_per_digitization_round */
         // allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "rate",               "Rate (Unit/Minute)",               "swap-vertical",         "",        "",            "",                 ""); // Legacy, always Unit per Minute
-        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "rate_per_time_unit",         "Rate (" + rateUnit + ")",          "swap-vertical",         rateUnit,              "",             "measurement",      "", qos);
-        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "rate_per_digitalization_round",  "Change since last digitalization round",  "arrow-expand-vertical", valueUnit,  "",             "measurement",      "", qos); // correctly the Unit is Unit/Interval!
+        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "rate_per_time_unit",         "Rate (" + rateUnit + ")",          "swap-vertical",         rateUnit,              rate_device_class, "measurement",      "", qos);
+        allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "rate_per_digitization_round",  "Change since last Digitization round",  "arrow-expand-vertical", valueUnit,  "",             "measurement",      "", qos); // correctly the Unit is Unit/Interval!
         allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "timestamp",                  "Timestamp",                     "clock-time-eight-outline", "",                    "timestamp",    "",                 "diagnostic", qos);
         allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "json",                       "JSON",                             "code-json",             "",                    "",             "",                 "diagnostic", qos);
         allSendsSuccessed |= sendHomeAssistantDiscoveryTopic(group,   "problem",                    "Problem",                          "alert-outline",         "",                    "problem",      "",                 "", qos); // Special binary sensor which is based on error topic
@@ -354,5 +374,10 @@ void mqttServer_setMainTopic( std::string _maintopic) {
 std::string mqttServer_getMainTopic() {
     return maintopic;
 }
+
+void mqttServer_setDmoticzInTopic( std::string _domoticzintopic) {
+    domoticzintopic = _domoticzintopic;
+}
+
 
 #endif //ENABLE_MQTT
