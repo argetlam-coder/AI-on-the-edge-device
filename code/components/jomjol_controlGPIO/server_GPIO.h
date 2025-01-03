@@ -9,9 +9,6 @@
 #include <map>
 #include "driver/gpio.h"
 
-#include <string>
-using namespace std;
-
 #include "SmartLeds.h"
 
 typedef enum {
