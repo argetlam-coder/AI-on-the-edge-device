@@ -34,6 +34,10 @@ extern "C"
 #include "esp_vfs_fat.h"
 #include "../sdmmc_common.h"
 
+#ifdef CONFIG_SOC_TEMP_SENSOR_SUPPORTED
+#include "driver/temperature_sensor.h"
+#endif
+
 static const char *TAG = "HELPER";
 
 using namespace std;
@@ -614,47 +618,63 @@ string toLower(string in)
 	return in;
 }
 
-// CPU Temp
-#ifdef CONFIG_IDF_TARGET_ESP32
+// SOC temperature sensor
+#if defined(CONFIG_SOC_TEMP_SENSOR_SUPPORTED)
+static float socTemperature = -1;
+
+void taskSocTemp(void *pvParameter)
+{
+    temperature_sensor_handle_t socTempSensor = NULL;
+    temperature_sensor_config_t socTempSensorConfig = TEMPERATURE_SENSOR_CONFIG_DEFAULT(20, 100);
+    temperature_sensor_install(&socTempSensorConfig, &socTempSensor);
+    temperature_sensor_enable(socTempSensor);
+
+    while (1) {
+        if (temperature_sensor_get_celsius(socTempSensor, &socTemperature) != ESP_OK) {
+            socTemperature = -1;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
+}
+
+void initTemperatureSensor()
+{
+    // Create a dedicated task to ensure access temperature ressource only from a single source
+    BaseType_t xReturned = xTaskCreate(&taskSocTemp, "taskSocTemp", 2048, NULL, tskIDLE_PRIORITY + 1, NULL);
+
+    if (xReturned != pdPASS) {
+        LogFile.WriteToFile(ESP_LOG_ERROR, TAG, "Failed to create taskSocTemp");
+    }
+}
+
+float temperatureRead()
+{
+    return socTemperature;
+}
+
+#elif defined(CONFIG_IDF_TARGET_ESP32) // Inofficial support of vanilla ESP32. Value might be unreliable
 extern "C" uint8_t temprature_sens_read();
-uint8_t temprature_sens_read();
 
 float temperatureRead()
 {
-	return (temprature_sens_read() - 32) / 1.8;
-}
-#elif SOC_TEMP_SENSOR_SUPPORTED
-static temperature_sensor_handle_t temp_sensor = NULL;
-
-static bool temperatureReadInit()
-{
-    static volatile bool initialized = false;
-    if(!initialized){
-        initialized = true;
-        //Install temperature sensor, expected temp ranger range: 10~50 ℃
-        temperature_sensor_config_t temp_sensor_config = TEMPERATURE_SENSOR_CONFIG_DEFAULT(10, 50);
-        if(temperature_sensor_install(&temp_sensor_config, &temp_sensor) != ESP_OK){
-            initialized = false;
-            temp_sensor = NULL;
-        }
-        else if(temperature_sensor_enable(temp_sensor) != ESP_OK){
-            temperature_sensor_uninstall(temp_sensor);
-            initialized = false;
-            temp_sensor = NULL;
-        }
-    }
-    return initialized;
+    return (temprature_sens_read() - 32) / 1.8;
 }
 
+#else
+#warning "SOC temperature sensor not supported"
 float temperatureRead()
 {
-    float result = NAN;
-    if(temperatureReadInit()){
-        temperature_sensor_get_celsius(temp_sensor, &result);
-    }
-    return result;
+    return -1.0;
 }
 #endif
+
+std::string intToHexString(int _valueInt)
+{
+    char valueHex[33];
+    sprintf(valueHex, "0x%02x", _valueInt);
+    return std::string(valueHex);
+}
 
 time_t addDays(time_t startTime, int days)
 {
