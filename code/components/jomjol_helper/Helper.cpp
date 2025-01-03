@@ -6,7 +6,6 @@
 #include "Helper.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "driver/temperature_sensor.h"
 
 #include <iomanip>
 #include <sstream>
