@@ -56,6 +56,11 @@ std::string ClassFlowControll::doSingleStep(std::string _stepname, std::string _
         _classname = "ClassFlowMQTT";
     }
     #endif //ENABLE_MQTT
+    #ifdef ENABLE_LORAWAN
+    if ((_stepname.compare("[LoRaWAN]") == 0) || (_stepname.compare(";[LoRaWAN]") == 0)){
+        _classname = "ClassFlowLoRaWAN";
+    }
+    #endif //ENABLE_LORAWAN
 
     #ifdef ENABLE_INFLUXDB
     if ((_stepname.compare("[InfluxDB]") == 0) || (_stepname.compare(";[InfluxDB]") == 0)){
@@ -105,7 +110,10 @@ std::string ClassFlowControll::TranslateAktstatus(std::string _input)
             return ("Sending MQTT");
         }
     #endif //ENABLE_MQTT
-		
+    #ifdef ENABLE_LORAWAN
+        if (_input.compare("ClassFlowLoRaWAN") == 0)
+            return ("Sending LoRaWAN");
+    #endif //ENABLE_LORAWAN
     #ifdef ENABLE_INFLUXDB
         if (_input.compare("ClassFlowInfluxDB") == 0) {
             return ("Sending InfluxDB");
@@ -195,6 +203,20 @@ bool ClassFlowControll::StartMQTTService()
 }
 #endif //ENABLE_MQTT
 
+#ifdef ENABLE_LORAWAN
+bool ClassFlowControll::StartLoRaWANService() 
+{
+    /* Start the LoRaWAN service */
+    for (int i = 0; i < FlowControll.size(); ++i) {
+        if (FlowControll[i]->name().compare("ClassFlowLoRaWAN") == 0) {
+            return ((ClassFlowLoRaWAN*) (FlowControll[i]))->Start(AutoInterval);
+        }  
+    } 
+    return false;
+}
+#endif //ENABLE_LORAWAN
+
+
 void ClassFlowControll::SetInitialParameter(void)
 {
     AutoStart = true;
@@ -252,7 +274,10 @@ ClassFlow* ClassFlowControll::CreateClassFlow(std::string _type)
         cfc = new ClassFlowMQTT(&FlowControll);
     }
     #endif //ENABLE_MQTT
-	
+    #ifdef ENABLE_LORAWAN
+    if (toUpper(_type).compare("[LoRaWAN]") == 0)
+        cfc = new ClassFlowLoRaWAN(&FlowControll);
+    #endif //ENABLE_LORAWAN
     #ifdef ENABLE_INFLUXDB
     if (toUpper(_type).compare("[INFLUXDB]") == 0) {
         cfc = new ClassFlowInfluxDB(&FlowControll);

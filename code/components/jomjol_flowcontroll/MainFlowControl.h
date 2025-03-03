@@ -84,6 +84,9 @@ int getCountFlowRounds(void);
 #ifdef ENABLE_MQTT
 esp_err_t MQTTCtrlFlowStart(std::string _topic);
 #endif // ENABLE_MQTT
+#ifdef ENABLE_LORAWAN
+esp_err_t LoRaWANCtrlFlowStart(std::string _topic);
+#endif //ENABLE_LORAWAN
 
 esp_err_t GetRawJPG(httpd_req_t *req);
 esp_err_t GetJPG(std::string _filename, httpd_req_t *req);

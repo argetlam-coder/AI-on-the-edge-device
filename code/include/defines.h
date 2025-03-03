@@ -344,6 +344,19 @@
     //ClassControllCamera
     #define FLASH_GPIO GPIO_NUM_48              // PIN for flashlight LED
 
+    //LoRaWan module pinout
+    #ifdef ENABLE_LORAWAN
+        #define LORAWAN_SPI_SCK        GPIO_NUM_14
+        #define LORAWAN_SPI_MISO       GPIO_NUM_41
+        #define LORAWAN_SPI_MOSI       GPIO_NUM_47
+
+        #define LORAWAN_RADIO_CS       GPIO_NUM_3
+        #define LORAWAN_RADIO_IRQ      GPIO_NUM_21
+        #define LORAWAN_RADIO_RST      GPIO_NUM_42
+        #define LORAWAN_RADIO_GPIO     GPIO_NUM_1
+    #endif
+
+
 #else
     #error "Board not selected"
 #endif  //Board PIN Map

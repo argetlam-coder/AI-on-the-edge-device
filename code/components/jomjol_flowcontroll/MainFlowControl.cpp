@@ -127,6 +127,9 @@ void doInit(void)
 #ifdef ENABLE_MQTT
     flowctrl.StartMQTTService();
 #endif // ENABLE_MQTT
+#ifdef ENABLE_LORAWAN
+    flowctrl.StartLoRaWANService();
+#endif //ENABLE_LORAWAN
 }
 
 bool doflow(void)
@@ -459,6 +462,32 @@ esp_err_t MQTTCtrlFlowStart(std::string _topic)
     return ESP_OK;
 }
 #endif // ENABLE_MQTT
+
+#ifdef ENABLE_LORAWAN
+esp_err_t LoRaWANCtrlFlowStart(std::string _topic)
+{
+    #ifdef DEBUG_DETAIL_ON          
+        LogFile.WriteHeapInfo("LoRaWANCtrlFlowStart - Start");       
+    #endif
+
+    ESP_LOGD(TAG, "LoRaWANCtrlFlowStart: topic %s", _topic.c_str());
+
+    if (autostartIsEnabled) {
+        xTaskAbortDelay(xHandletask_autodoFlow); // Delay will be aborted if task is in blocked (waiting) state. If task is already running, no action
+        LogFile.WriteToFile(ESP_LOG_DEBUG, TAG, "Flow start triggered by LoRaWAN message " + _topic);
+    }
+    else {
+        LogFile.WriteToFile(ESP_LOG_WARN, TAG, "Flow start triggered by LoRaWAN message " + _topic + ", but flow is not active!");
+    }  
+
+    #ifdef DEBUG_DETAIL_ON   
+        LogFile.WriteHeapInfo("LoRaWANCtrlFlowStart - Done");       
+    #endif
+
+    return ESP_OK;
+}
+#endif //ENABLE_LORAWAN
+
 
 esp_err_t handler_json(httpd_req_t *req)
 {
