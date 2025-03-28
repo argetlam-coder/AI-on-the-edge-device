@@ -31,7 +31,7 @@ extern "C"
 #include "ClassLogFile.h"
 
 #include "esp_vfs_fat.h"
-#include "../sdmmc_common.h"
+#include "esp_private/sdmmc_common.h"
 
 #ifdef CONFIG_SOC_TEMP_SENSOR_SUPPORTED
 #include "driver/temperature_sensor.h"

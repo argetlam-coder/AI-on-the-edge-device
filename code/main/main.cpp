@@ -79,10 +79,6 @@
     static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in internal RAM
 #endif
 
-#ifdef ENABLE_LORAWAN
-#include "LoRaWAN_functions.h"
-#endif //ENABLE_LORAWAN
-
 extern const char *GIT_TAG;
 extern const char *GIT_REV;
 extern const char *GIT_BRANCH;
@@ -545,11 +541,6 @@ extern "C" void app_main(void)
 
     ESP_LOGD(TAG, "Before reg server main");
     register_server_main_uri(server, "/sdcard");
-
-    // Initialize LoRaWAN module
-    #ifdef ENABLE_LORAWAN
-        lorawan_initialize();
-    #endif //ENABLE_LORAWAN
 
     // Only for testing purpose
     //setSystemStatusFlag(SYSTEM_STATUS_CAM_FB_BAD);

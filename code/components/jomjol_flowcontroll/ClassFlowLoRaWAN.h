@@ -21,6 +21,7 @@ class ClassFlowLoRaWAN :
 protected:
       LoRaWANBand_t region;
       uint8_t subBand;
+      float roundInterval; // Minutes
       uint32_t uplinkInterval;
       uint8_t initialDatarate;
       bool ADRActive;
@@ -36,15 +37,17 @@ protected:
       // OTAA parameters
       uint64_t joinEUI;
       uint64_t devEUI;
-      uint8_t nwkKey[16];
-      uint8_t appKey[16];
+      uint8_t *nwkKey;
+      uint8_t *appKey;
       // ABP parameters
       uint32_t devAddr;
-      uint8_t fNwkSIntKey[16];
-      uint8_t sNwkSIntKey[16];
-      uint8_t nwkSEncKey[16];
-      uint8_t appSKey[16];
+      uint8_t *fNwkSIntKey;
+      uint8_t *sNwkSIntKey;
+      uint8_t *nwkSEncKey;
+      uint8_t *appSKey;
+      std::string OldValue;
       ClassFlowPostProcessing* flowpostprocessing;
+      bool LoRaWANenable;
 
 	  void SetInitialParameter(void);        
 

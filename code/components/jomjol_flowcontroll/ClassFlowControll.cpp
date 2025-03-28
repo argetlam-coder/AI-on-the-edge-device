@@ -275,8 +275,9 @@ ClassFlow* ClassFlowControll::CreateClassFlow(std::string _type)
     }
     #endif //ENABLE_MQTT
     #ifdef ENABLE_LORAWAN
-    if (toUpper(_type).compare("[LoRaWAN]") == 0)
+    if (toUpper(_type).compare("[LORAWAN]") == 0) {
         cfc = new ClassFlowLoRaWAN(&FlowControll);
+    }
     #endif //ENABLE_LORAWAN
     #ifdef ENABLE_INFLUXDB
     if (toUpper(_type).compare("[INFLUXDB]") == 0) {

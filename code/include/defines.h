@@ -346,6 +346,8 @@
 
     //LoRaWan module pinout
     #ifdef ENABLE_LORAWAN
+        #define LORAWAN_RADIO_TYPE     SX1262
+
         #define LORAWAN_SPI_SCK        GPIO_NUM_14
         #define LORAWAN_SPI_MISO       GPIO_NUM_41
         #define LORAWAN_SPI_MOSI       GPIO_NUM_47

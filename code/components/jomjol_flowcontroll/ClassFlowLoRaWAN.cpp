@@ -32,14 +32,21 @@ void ClassFlowLoRaWAN::SetInitialParameter(void)
       // OTAA parameters
       joinEUI = NULL;
       devEUI = NULL;
-      nwkKey[16] = NULL;
-      appKey[16] = NULL;
+      nwkKey = NULL;
+      appKey = NULL;
       // ABP parameters
       devAddr = NULL;
-      fNwkSIntKey[16] = NULL;
-      sNwkSIntKey[16] = NULL;
-      nwkSEncKey[16] = NULL;
-      appSKey[16] = NULL;
+      fNwkSIntKey = NULL;
+      sNwkSIntKey = NULL;
+      nwkSEncKey = NULL;
+      appSKey = NULL;
+      
+      OldValue = "";
+      flowpostprocessing = NULL;  
+      previousElement = NULL;
+      ListFlowControll = NULL; 
+      disabled = false;
+      LoRaWANenable = false;
 }   
 
 ClassFlowLoRaWAN::ClassFlowLoRaWAN()
@@ -77,18 +84,38 @@ ClassFlowLoRaWAN::ClassFlowLoRaWAN(std::vector<ClassFlow*>* lfc, ClassFlow *_pre
     }
 }
 
+
+std::vector<uint8_t> hexStringToByteArray(const std::string& hexString)
+{
+    std::vector<uint8_t> byteArray;
+
+    // Loop through the hex string, two characters at a time
+    for (size_t i = 0; i < hexString.length(); i += 2) {
+        // Extract two characters representing a byte
+        std::string byteString = hexString.substr(i, 2);
+
+        // Convert the byte string to a uint8_t value
+        uint8_t byteValue = static_cast<uint8_t>(
+            stoi(byteString, nullptr, 16));
+
+        // Add the byte to the byte array
+        byteArray.push_back(byteValue);
+    }
+
+    return byteArray;
+}
+
 bool ClassFlowLoRaWAN::ReadParameter(FILE* pfile, string& aktparamgraph)
 {
     std::vector<string> splitted;
 
     aktparamgraph = trim(aktparamgraph);
-    printf("akt param: %s\n", aktparamgraph.c_str());
 
     if (aktparamgraph.size() == 0)
         if (!this->GetNextParagraph(pfile, aktparamgraph))
             return false;
 
-    if (toUpper(aktparamgraph).compare("[LoRaWAN]") != 0)
+    if (toUpper(aktparamgraph).compare("[LORAWAN]") != 0)
         return false;
 
     while (this->getNextLine(pfile, &aktparamgraph) && !this->isNewParagraph(aktparamgraph))
@@ -197,11 +224,13 @@ bool ClassFlowLoRaWAN::ReadParameter(FILE* pfile, string& aktparamgraph)
         if ((toUpper(_param) == "NWKKEY") && (splitted.size() > 1))
         {
             std::vector<uint8_t> nwkKeyVector = hexStringToByteArray(splitted[1]);
+            this->nwkKey = new uint8_t[16];
             copy(nwkKeyVector.begin(), nwkKeyVector.end(), this->nwkKey);
         }
         if ((toUpper(_param) == "APPKEY") && (splitted.size() > 1))
         {
             std::vector<uint8_t> appKeyVector = hexStringToByteArray(splitted[1]);
+            this->appKey = new uint8_t[16];
             copy(appKeyVector.begin(), appKeyVector.end(), this->appKey);
         }
         // ABP parameters
@@ -236,136 +265,76 @@ bool ClassFlowLoRaWAN::ReadParameter(FILE* pfile, string& aktparamgraph)
 
 bool ClassFlowLoRaWAN::Start(float AutoInterval) 
 {
-    // std::stringstream stream;
-    // stream << std::fixed << std::setprecision(1) << "Digitizer interval is " << roundInterval <<
-    //         " minutes => setting MQTT LWT timeout to " << ((float)keepAlive/60) << " minutes.";
-    // LogFile.WriteToFile(ESP_LOG_DEBUG, TAG, stream.str());
+    LogFile.WriteToFile(ESP_LOG_DEBUG, TAG, "Starting LoRaWAN communication");
 
-    // mqttServer_setParameter(flowpostprocessing->GetNumbers(), keepAlive, roundInterval);
-
-    // bool MQTTConfigCheck = MQTT_Configure(uri, clientname, user, password, maintopic, LWT_TOPIC, LWT_CONNECTED,
-    //                                  LWT_DISCONNECTED, caCertFilename, clientCertFilename, clientKeyFilename,
-    //                                  keepAlive, SetRetainFlag, (void *)&GotConnected);
-
-    // if (!MQTTConfigCheck) {
-    //     return false;
-    // }
-
-    // return (MQTT_Init() == 1);
-    uint16_t LoRaWANInitializeCheck = LoRaWAN_Init(region, subBand, uplinkInterval, initialDatarate, ADRActive,
+    roundInterval = AutoInterval; // Minutes
+    uint16_t LoRaWANInitializeCheck = LoRaWAN_Init(region, subBand, roundInterval, uplinkInterval, initialDatarate, ADRActive,
                                                 CSMAActive,  CSMAMaxChanges, CSMABackoffMax, CSMADifsSlots,
                                                 dutyCycleLimitsActive, dutyCycleMsPerHour, dwellTimeLimitsActive, dwellTimeMsPerUplink,
                                                 deviceActivationMethod, 
                                                 joinEUI, devEUI, nwkKey, appKey, 
                                                 devAddr, fNwkSIntKey, sNwkSIntKey, nwkSEncKey, appSKey);
+
+    if (LoRaWANInitializeCheck != 0) {
+        return false;
+    }
+
+    LoRaWANenable = true;
+
     return true;
 }
 
 bool ClassFlowLoRaWAN::doFlow(string zwtime)
 {
-    bool success;
+    if (!LoRaWANenable)
+        return true;
+
     std::string result;
     std::string resulterror = "";
+    uint8_t resulterrorCode = 0;
     std::string resultraw = "";
     std::string resultpre = "";
     std::string resultrate = ""; // Always Unit / Minute
     std::string resultRatePerTimeUnit = ""; // According to selection
-    std::string resulttimestamp = "";
     std::string resultchangabs = "";
-    string zw = "";
+    std::string resulttimestamp = "";        
+    time_t resulttimeutc = 0;
     string namenumber = "";
-    int qos = 1;
 
-    /* Send the the Homeassistant Discovery and the Static Topics in case they where scheduled */
-    // sendDiscovery_and_static_Topics();
+    if (flowpostprocessing && getLoRaWANisSessionActive())
+    {
+        std::vector<NumberPost*>* NUMBERS = flowpostprocessing->GetNumbers();
 
-    // success = publishSystemData(qos);
+        for (int i = 0; i < (*NUMBERS).size(); ++i)
+        {
+            result =  (*NUMBERS)[i]->ReturnValue;
+            resultraw =  (*NUMBERS)[i]->ReturnRawValue;
+            resulterror = (*NUMBERS)[i]->ErrorMessageText;
+            resultrate = (*NUMBERS)[i]->ReturnRateValue; // Unit per minutes
+            resulttimeutc = (*NUMBERS)[i]->timeStampTimeUTC;
 
-    // if (flowpostprocessing && getMQTTisConnected())
-    // {
-    //     std::vector<NumberPost*>* NUMBERS = flowpostprocessing->GetNumbers();
+            namenumber = (*NUMBERS)[i]->name;
 
-    //     LogFile.WriteToFile(ESP_LOG_DEBUG, TAG, "Publishing MQTT topics...");
+            if (resulterror == "no error") {
+                resulterrorCode = 0;
+            }
+            else{
+                if (resulterror.rfind("Neg. Rate", 0) == 0){
+                    resulterrorCode = 1;
+                }
+                if (resulterror.rfind("Rate too high", 0) == 0){
+                    resulterrorCode = 2;
+                }
+            }
 
-    //     for (int i = 0; i < (*NUMBERS).size(); ++i)
-    //     {
-    //         result =  (*NUMBERS)[i]->ReturnValue;
-    //         resultraw =  (*NUMBERS)[i]->ReturnRawValue;
-    //         resultpre =  (*NUMBERS)[i]->ReturnPreValue;
-    //         resulterror = (*NUMBERS)[i]->ErrorMessageText;
-    //         resultrate = (*NUMBERS)[i]->ReturnRateValue; // Unit per minutes
-    //         resultchangabs = (*NUMBERS)[i]->ReturnChangeAbsolute; // Units per round
-    //         resulttimestamp = (*NUMBERS)[i]->timeStamp;
-
-    //         namenumber = (*NUMBERS)[i]->name;
-    //         if (namenumber == "default")
-    //             namenumber = maintopic + "/";
-    //         else
-    //             namenumber = maintopic + "/" + namenumber + "/";
-
-
-    //         if (result.length() > 0)   
-    //             success |= MQTTPublish(namenumber + "value", result, qos, SetRetainFlag);
-
-    //         if (resulterror.length() > 0)  
-    //             success |= MQTTPublish(namenumber + "error", resulterror, qos, SetRetainFlag);
-
-    //         if (resultrate.length() > 0) {
-    //             success |= MQTTPublish(namenumber + "rate", resultrate, qos, SetRetainFlag);
-                
-    //             std::string resultRatePerTimeUnit;
-    //             if (getTimeUnit() == "h") { // Need conversion to be per hour
-    //                 resultRatePerTimeUnit = resultRatePerTimeUnit = to_string((*NUMBERS)[i]->FlowRateAct * 60); // per minutes => per hour
-    //             }
-    //             else { // Keep per minute
-    //                 resultRatePerTimeUnit = resultrate;
-    //             }
-    //             success |= MQTTPublish(namenumber + "rate_per_time_unit", resultRatePerTimeUnit, qos, SetRetainFlag);
-    //         }
-
-    //         if (resultchangabs.length() > 0) {
-    //             success |= MQTTPublish(namenumber + "changeabsolut", resultchangabs, qos, SetRetainFlag); // Legacy API
-    //             success |= MQTTPublish(namenumber + "rate_per_digitalization_round", resultchangabs, qos, SetRetainFlag);
-    //         }
-
-    //         if (resultraw.length() > 0)   
-    //             success |= MQTTPublish(namenumber + "raw", resultraw, qos, SetRetainFlag);
-
-    //         if (resulttimestamp.length() > 0)
-    //             success |= MQTTPublish(namenumber + "timestamp", resulttimestamp, qos, SetRetainFlag);
-
-    //         std::string json = flowpostprocessing->getJsonFromNumber(i, "\n");
-    //         success |= MQTTPublish(namenumber + "json", json, qos, SetRetainFlag);
-    //     }
-    // }
+            if (result.length() > 0)  {} 
+                LoRaWANQueueMessage(i, resulttimeutc, std::stod(result), std::stod(resultrate), resulterrorCode);
+        }
+    }
     
-    // OldValue = result;
-
-    // if (!success) {
-    //     LogFile.WriteToFile(ESP_LOG_WARN, TAG, "One or more MQTT topics failed to be published!");
-    // }
+    OldValue = result;
     
     return true;
-}
-
-std::vector<uint8_t> hexStringToByteArray(const std::string& hexString)
-{
-    std::vector<uint8_t> byteArray;
-
-    // Loop through the hex string, two characters at a time
-    for (size_t i = 0; i < hexString.length(); i += 2) {
-        // Extract two characters representing a byte
-        std::string byteString = hexString.substr(i, 2);
-
-        // Convert the byte string to a uint8_t value
-        uint8_t byteValue = static_cast<uint8_t>(
-            stoi(byteString, nullptr, 16));
-
-        // Add the byte to the byte array
-        byteArray.push_back(byteValue);
-    }
-
-    return byteArray;
 }
 
 #endif //ENABLE_LORAWAN
