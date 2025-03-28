@@ -31,7 +31,6 @@ AlignmentAlgo
 CNNGoodThreshold
 PreValueAgeStartup
 ErrorMessage
-CheckDigitIncreaseConsistency
 IO0
 IO1
 IO3
@@ -43,5 +42,6 @@ Hostname
 RSSIThreshold
 TimeServer
 CACert
+ValidateServerCert
 ClientCert
 ClientKey
