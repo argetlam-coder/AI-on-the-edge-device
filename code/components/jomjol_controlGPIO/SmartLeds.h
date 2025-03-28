@@ -1,3 +1,29 @@
+/********************************************************************************
+ * https://github.com/RoboticsBrno/SmartLeds
+ *
+ * MIT License
+ * 
+ * Copyright (c) 2017 RoboticsBrno (RobotikaBrno)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *******************************************************************************/
+
 #pragma once
 
 /*
@@ -194,8 +220,10 @@ private:
 
 #if defined(CONFIG_IDF_TARGET_ESP32S3) || defined(CONFIG_IDF_TARGET_ESP32C3)
 #define _SMARTLEDS_SPI_HOST SPI2_HOST
+#define _SMARTLEDS_SPI_DMA_CHAN SPI_DMA_CH_AUTO
 #else
 #define _SMARTLEDS_SPI_HOST HSPI_HOST
+#define _SMARTLEDS_SPI_DMA_CHAN 1
 #endif
 
 class Apa102 {
@@ -225,10 +253,11 @@ public:
     static const int FINAL_FRAME_SIZE = 4;
     static const int TRANS_COUNT = 2 + 8;
 
-    Apa102(int count, int clkpin, int datapin, BufferType doubleBuffer = SingleBuffer)
+    Apa102(int count, int clkpin, int datapin, BufferType doubleBuffer = SingleBuffer, int clock_speed_hz = 1000000)
         : _count(count)
         , _firstBuffer(new ApaRgb[count])
         , _secondBuffer(doubleBuffer ? new ApaRgb[count] : nullptr)
+        , _transCount(0)
         , _initFrame(0) {
         spi_bus_config_t buscfg;
         memset(&buscfg, 0, sizeof(buscfg));
@@ -241,13 +270,13 @@ public:
 
         spi_device_interface_config_t devcfg;
         memset(&devcfg, 0, sizeof(devcfg));
-        devcfg.clock_speed_hz = 1000000;
+        devcfg.clock_speed_hz = clock_speed_hz;
         devcfg.mode = 0;
         devcfg.spics_io_num = -1;
         devcfg.queue_size = TRANS_COUNT;
         devcfg.pre_cb = nullptr;
 
-        auto ret = spi_bus_initialize(_SMARTLEDS_SPI_HOST, &buscfg, 1);
+        auto ret = spi_bus_initialize(_SMARTLEDS_SPI_HOST, &buscfg, _SMARTLEDS_SPI_DMA_CHAN);
         assert(ret == ESP_OK);
 
         ret = spi_bus_add_device(_SMARTLEDS_SPI_HOST, &devcfg, &_spi);
@@ -375,7 +404,7 @@ public:
         devcfg.queue_size = TRANS_COUNT_MAX;
         devcfg.pre_cb = nullptr;
 
-        auto ret = spi_bus_initialize(_SMARTLEDS_SPI_HOST, &buscfg, 1);
+        auto ret = spi_bus_initialize(_SMARTLEDS_SPI_HOST, &buscfg, _SMARTLEDS_SPI_DMA_CHAN);
         assert(ret == ESP_OK);
 
         ret = spi_bus_add_device(_SMARTLEDS_SPI_HOST, &devcfg, &_spi);

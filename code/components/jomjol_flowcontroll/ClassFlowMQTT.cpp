@@ -40,6 +40,7 @@ void ClassFlowMQTT::SetInitialParameter(void)
     caCertFilename = "";
     clientCertFilename = "";
     clientKeyFilename = "";
+    validateServerCert = true;
     clientname = wlan_config.hostname;
 
     OldValue = "";
@@ -109,15 +110,19 @@ bool ClassFlowMQTT::ReadParameter(FILE* pfile, string& aktparamgraph)
         std::string _param = GetParameterName(splitted[0]);
         if ((toUpper(_param) == "CACERT") && (splitted.size() > 1))
         {
-            this->caCertFilename = splitted[1];
+            this->caCertFilename = "/sdcard" + splitted[1];
+        }
+        if ((toUpper(_param) == "VALIDATESERVERCERT") && (splitted.size() > 1))
+        {
+            validateServerCert = alphanumericToBoolean(splitted[1]);
         }  
         if ((toUpper(_param) == "CLIENTCERT") && (splitted.size() > 1))
         {
-            this->clientCertFilename = splitted[1];
+            this->clientCertFilename = "/sdcard" + splitted[1];
         }  
         if ((toUpper(_param) == "CLIENTKEY") && (splitted.size() > 1))
         {
-            this->clientKeyFilename = splitted[1];
+            this->clientKeyFilename = "/sdcard" + splitted[1];
         }  
         if ((toUpper(_param) == "USER") && (splitted.size() > 1))
         {
@@ -133,10 +138,8 @@ bool ClassFlowMQTT::ReadParameter(FILE* pfile, string& aktparamgraph)
         }
         if ((toUpper(_param) == "RETAINMESSAGES") && (splitted.size() > 1))
         {
-            if (toUpper(splitted[1]) == "TRUE") {
-                SetRetainFlag = true;  
-                setMqtt_Server_Retain(SetRetainFlag);
-            }
+            SetRetainFlag = alphanumericToBoolean(splitted[1]);
+            setMqtt_Server_Retain(SetRetainFlag);
         }
         if ((toUpper(_param) == "HOMEASSISTANTDISCOVERY") && (splitted.size() > 1))
         {
@@ -153,7 +156,7 @@ bool ClassFlowMQTT::ReadParameter(FILE* pfile, string& aktparamgraph)
                 mqttServer_setMeterType("water", "L", "h", "L/h");
             }
             else if (toUpper(splitted[1]) == "WATER_FT3") {
-                mqttServer_setMeterType("water", "ft³", "m", "ft³/m"); // m = Minutes
+                mqttServer_setMeterType("water", "ft³", "min", "ft³/min"); // min = Minutes
             }
             else if (toUpper(splitted[1]) == "WATER_GAL") {
                 mqttServer_setMeterType("water", "gal", "h", "gal/h");
@@ -162,7 +165,7 @@ bool ClassFlowMQTT::ReadParameter(FILE* pfile, string& aktparamgraph)
                 mqttServer_setMeterType("gas", "m³", "h", "m³/h");
             }
             else if (toUpper(splitted[1]) == "GAS_FT3") {
-                mqttServer_setMeterType("gas", "ft³", "m", "ft³/m"); // m = Minutes
+                mqttServer_setMeterType("gas", "ft³", "min", "ft³/min"); // min = Minutes
             }
             else if (toUpper(splitted[1]) == "ENERGY_WH") {
                 mqttServer_setMeterType("energy", "Wh", "h", "W");
@@ -175,6 +178,15 @@ bool ClassFlowMQTT::ReadParameter(FILE* pfile, string& aktparamgraph)
             }
             else if (toUpper(splitted[1]) == "ENERGY_GJ") {
                 mqttServer_setMeterType("energy", "GJ", "h", "GJ/h");
+            }
+            else if (toUpper(splitted[1]) == "TEMPERATURE_C") {
+                mqttServer_setMeterType("temperature", "°C", "min", "°C/min"); // min = Minutes
+            }
+            else if (toUpper(splitted[1]) == "TEMPERATURE_F") {
+                mqttServer_setMeterType("temperature", "°F", "min", "°F/min"); // min = Minutes
+            }
+            else if (toUpper(splitted[1]) == "TEMPERATURE_K") {
+                mqttServer_setMeterType("temperature", "K", "min", "K/m"); // min = Minutes
             }
         }
 
@@ -225,7 +237,7 @@ bool ClassFlowMQTT::Start(float AutoInterval)
     mqttServer_setParameter(flowpostprocessing->GetNumbers(), keepAlive, roundInterval);
 
     bool MQTTConfigCheck = MQTT_Configure(uri, clientname, user, password, maintopic, domoticzintopic, LWT_TOPIC, LWT_CONNECTED,
-                                     LWT_DISCONNECTED, caCertFilename, clientCertFilename, clientKeyFilename,
+                                     LWT_DISCONNECTED, caCertFilename, validateServerCert, clientCertFilename, clientKeyFilename,
                                      keepAlive, SetRetainFlag, (void *)&GotConnected);
 
     if (!MQTTConfigCheck) {

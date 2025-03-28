@@ -1,3 +1,29 @@
+/********************************************************************************
+ * https://github.com/RoboticsBrno/SmartLeds
+ *
+ * MIT License
+ * 
+ * Copyright (c) 2017 RoboticsBrno (RobotikaBrno)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *******************************************************************************/
+
 #include "RmtDriver5.h"
 
 #if SMARTLEDS_NEW_RMT_DRIVER
@@ -122,7 +148,7 @@ esp_err_t RmtDriver::init() {
 esp_err_t RmtDriver::registerIsr(bool isFirstRegisteredChannel) {
     rmt_tx_channel_config_t conf = {
         .gpio_num = (gpio_num_t)_pin,
-        .clk_src = RMT_CLK_SRC_APB,
+        .clk_src = RMT_CLK_SRC_DEFAULT, //.clk_src = RMT_CLK_SRC_APB,
         .resolution_hz = RMT_RESOLUTION_HZ,
         .mem_block_symbols = SOC_RMT_MEM_WORDS_PER_CHANNEL,
         .trans_queue_depth = 1,

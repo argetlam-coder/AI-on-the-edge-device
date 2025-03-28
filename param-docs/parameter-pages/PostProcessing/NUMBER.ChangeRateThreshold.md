@@ -1,13 +1,16 @@
-# Parameter `<NUMBER>.ChangeRateThreshold`
+# Parameter `ChangeRateThreshold`
 Default Value: `2`
 
-Range: `1` .. `9`.
+Range: `0` .. `9`.
 
 Threshold parameter for change rate detection.<br>
 This parameter is intended to compensate for small reading fluctuations that occur when the meter does not change its value for a long time (e.g. at night) or slightly turns backwards. This can eg. happen on watermeters.
 
 It is only applied to the last digit of the read value (See example below).
 If the read value is within PreValue +/- Threshold, no further calculation is carried out and the Value/Prevalue remains at the old value.
+
+!!! Note
+    This parameter must be prefixed with `<NUMBER>` followed by a dot (eg. `main.ChangeRateThreshold`). `<NUMBER>` is the name of the number sequence  defined in the ROI's.
 
 ## Example
 

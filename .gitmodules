@@ -10,6 +10,9 @@
 [submodule "code/components/stb"]
 	path = code/components/stb
 	url = https://github.com/nothings/stb.git
+[submodule "code/components/esp-protocols"]
+	path = code/components/esp-protocols
+	url = https://github.com/espressif/esp-protocols.git
 [submodule "code/components/RadioLib"]
 	path = code/components/RadioLib
 	url = https://github.com/jgromes/RadioLib
