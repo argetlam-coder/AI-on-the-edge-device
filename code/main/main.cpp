@@ -122,7 +122,7 @@ bool Init_NVS_SDCard()
     if (ret != ESP_OK)
     {
         ESP_LOGE(TAG, "Failed to create a new on-chip LDO power control driver");
-        return ret;
+        return false;
     }
     host.pwr_ctrl_handle = pwr_ctrl_handle;
 #endif
@@ -174,7 +174,7 @@ bool Init_NVS_SDCard()
         .format_if_mount_failed = false,
         .max_files = 12,                         // previously -> 2022-09-21: 5, 2023-01-02: 7 
         .allocation_unit_size = 0,               // 0 = auto
-        .disk_status_check_enable = 0
+        .disk_status_check_enable = 0,
     };
 
     sdmmc_card_t* card;
@@ -254,6 +254,35 @@ extern "C" void app_main(void)
     LogFile.WriteToFile(ESP_LOG_INFO, TAG, "==================== Start ======================");
     LogFile.WriteToFile(ESP_LOG_INFO, TAG, "=================================================");
 
+    // SD card: basic R/W check
+    // ********************************************
+    int iSDCardStatus = SDCardCheckRW();
+    if (iSDCardStatus < 0) {
+        if (iSDCardStatus <= -1 && iSDCardStatus >= -2) { // write error
+            StatusLED(SDCARD_CHECK, 1, true);
+        }
+        else if (iSDCardStatus <= -3 && iSDCardStatus >= -5) { // read error
+            StatusLED(SDCARD_CHECK, 2, true);
+        }
+        else if (iSDCardStatus == -6) { // delete error
+            StatusLED(SDCARD_CHECK, 3, true);
+        }
+        setSystemStatusFlag(SYSTEM_STATUS_SDCARD_CHECK_BAD); // reduced web interface going to be loaded
+    }
+
+    // SD card: Create further mandatory directories (if not already existing)
+    // Correct creation of these folders will be checked with function "SDCardCheckFolderFilePresence"
+    // ********************************************
+    MakeDir("/sdcard/firmware");         // mandatory for OTA firmware update
+    MakeDir("/sdcard/img_tmp");          // mandatory for setting up alignment marks
+    MakeDir("/sdcard/demo");             // mandatory for demo mode
+    MakeDir("/sdcard/config/certs");     // mandatory for mqtt certificates
+
+    // Check for updates
+    // ********************************************
+    CheckOTAUpdate();
+    CheckUpdate();
+
     // Init external PSRAM
     // ********************************************
     esp_err_t PSRAMStatus = esp_psram_init();
@@ -291,7 +320,7 @@ extern "C" void app_main(void)
                     setSystemStatusFlag(SYSTEM_STATUS_HEAP_TOO_SMALL);
                     StatusLED(PSRAM_INIT, 3, true);
                 }
-                else { // OK
+                else { // PSRAM OK
                     // Init camera
                     // ********************************************
                     PowerResetCamera();
@@ -322,10 +351,12 @@ extern "C" void app_main(void)
                             LogFile.WriteToFile(ESP_LOG_ERROR, TAG, "Camera init failed (" + std::string(camStatusHex) +
                                                                     ")! Check camera module and/or proper electrical connection");
                             setSystemStatusFlag(SYSTEM_STATUS_CAM_BAD);
+                            Camera.LightOnOff(false);   // make sure flashlight is off
                             StatusLED(CAM_INIT, 1, true);
                         }
                     }
-                    else { // ESP_OK -> Camera init OK --> continue to perform camera framebuffer check
+
+                    if (camStatus == ESP_OK) { // ESP_OK -> Camera init OK --> continue to perform camera framebuffer check
                         // Camera framebuffer check
                         // ********************************************
                         if (!Camera.testCamera()) {
@@ -350,22 +381,6 @@ extern "C" void app_main(void)
         }
     }
 
-    // SD card: basic R/W check
-    // ********************************************
-    int iSDCardStatus = SDCardCheckRW();
-    if (iSDCardStatus < 0) {
-        if (iSDCardStatus <= -1 && iSDCardStatus >= -2) { // write error
-            StatusLED(SDCARD_CHECK, 1, true);
-        }
-        else if (iSDCardStatus <= -3 && iSDCardStatus >= -5) { // read error
-            StatusLED(SDCARD_CHECK, 2, true);
-        }
-        else if (iSDCardStatus == -6) { // delete error
-            StatusLED(SDCARD_CHECK, 3, true);
-        }
-        setSystemStatusFlag(SYSTEM_STATUS_SDCARD_CHECK_BAD); // reduced web interface going to be loaded
-    }
-
     // Migrate parameter in config.ini to new naming (firmware 15.0 and newer)
     // ********************************************
     migrateConfiguration();
@@ -383,18 +398,6 @@ extern "C" void app_main(void)
     // Set CPU Frequency
     // ********************************************
     setCpuFrequency();
-
-    // SD card: Create further mandatory directories (if not already existing)
-    // Correct creation of these folders will be checked with function "SDCardCheckFolderFilePresence"
-    // ********************************************
-    MakeDir("/sdcard/firmware");         // mandatory for OTA firmware update
-    MakeDir("/sdcard/img_tmp");          // mandatory for setting up alignment marks
-    MakeDir("/sdcard/demo");             // mandatory for demo mode
-
-    // Check for updates
-    // ********************************************
-    CheckOTAUpdate();
-    CheckUpdate();
 
     // Start SoftAP for initial remote setup
     // Note: Start AP if no wlan.ini and/or config.ini available, e.g. SD card empty; function does not exit anymore until reboot
@@ -960,11 +963,8 @@ bool setCpuFrequency(void) {
     /* Load config from config file */
     while ((!configFile.GetNextParagraph(line, disabledLine, eof) || 
             (line.compare("[System]") != 0)) && !eof) {}
-    if (eof) {
-        return false;
-    }
 
-    if (disabledLine) {
+    if (eof || disabledLine) {
         return false;
     }
 
@@ -974,7 +974,7 @@ bool setCpuFrequency(void) {
 
         if (toUpper(splitted[0]) == "CPUFREQUENCY") {
             if (splitted.size() < 2) {
-                cpuFrequency = 160;
+                cpuFrequency = "160";
             }
             else {
                 cpuFrequency = splitted[1];
