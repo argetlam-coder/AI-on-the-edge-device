@@ -173,6 +173,17 @@ void task_lorawan_communication(void *pvParameter) {
     // (state 0 = no downlink, state 1/2 = downlink in window Rx1/Rx2)
     if(state > 0) { 
       if (downlinkSize > 0){
+        uint32_t networkTime = 0;
+        uint8_t fracSecond = 0;
+        if(node->getMacDeviceTimeAns(&networkTime, &fracSecond, true) == RADIOLIB_ERR_NONE) {
+          ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime Unix:\t%lu", networkTime);
+          ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime second:\t1/%u", fracSecond);
+          struct timeval now; 
+          now.tv_sec = networkTime;
+          now.tv_usec = static_cast<long>(fracSecond / 256 * 1000000);
+          settimeofday(&now, NULL);
+        }
+
         //check if it is a wifi toggle command
         if (downlinkDetails.fPort == 1 ) {
           if (downlinkPayload[0] == 1){
@@ -233,14 +244,6 @@ void task_lorawan_communication(void *pvParameter) {
         ESP_LOGE(LORAWAN_LOG_TAG, "LinkCheck margin:\t%u",margin);
         ESP_LOGE(LORAWAN_LOG_TAG, "LinkCheck count:\t%u", gwCnt);
       }
-
-      uint32_t networkTime = 0;
-      uint8_t fracSecond = 0;
-      if(node->getMacDeviceTimeAns(&networkTime, &fracSecond, true) == RADIOLIB_ERR_NONE) {
-        ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime Unix:\t%lu", networkTime);
-        ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime second:\t1/%u", fracSecond);
-      }
-
     } else {
       ESP_LOGE(LORAWAN_LOG_TAG, "No downlink received");
     }
