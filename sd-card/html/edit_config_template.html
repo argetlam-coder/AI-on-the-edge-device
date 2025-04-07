@@ -1442,6 +1442,304 @@
             <td>$TOOLTIP_Webhook_UploadImg</td>
         </tr>
 
+        <!------------- LoRaWAN ------------------>
+        <tr style="border-bottom: 2px solid lightgray;">
+            <td colspan="3" style="padding-left: 0px; padding-bottom: 3px;">
+                <h4>
+                <input type="checkbox" id="Category_LoRaWAN_enabled" value="1"  onclick = 'UpdateAfterCategoryCheck()' unchecked >
+                <label for=Category_LoRaWAN_enabled>LoRaWAN</label>
+                </h4>		
+            </td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">
+                <label><class id="LoRaWAN_Region_text" style="color:black;">Region</class></label>
+            </td>
+            <td>
+                <select id="LoRaWAN_Region_value1">
+                    <option value="EU868" selected>EU868</option>
+                    <option value="EU433">EU433</option>
+                    <option value="US915">US915</option>
+                    <option value="AU915">AU915</option>
+                    <option value="CN500">CN500</option>
+                    <option value="AS923">AS923</option>
+                    <option value="AS923_2">AS923 2</option>
+                    <option value="AS923_3">AS923 3</option>
+                    <option value="AS923_4">AS923 4</option>
+                    <option value="KR920">KR920</option>
+                    <option value="IN865">IN865</option>
+                </select>
+            </td>
+            <td>$TOOLTIP_LoRaWAN_Region</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">
+                <input type="checkbox" id="LoRaWAN_SubBand_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "SubBand")' unchecked >
+                <label for=LoRaWAN_SubBand_enabled><class id="LoRaWAN_SubBand_text" style="color:black;">Sub-Band</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_SubBand_value1" size="13" min="0" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_SubBand</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">
+                <label><class id="LoRaWAN_UplinkInterval_text" style="color:black;">Uplink Interval</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_UplinkInterval_value1" size="13" min="1" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">Seconds
+            </td>
+            <td>$TOOLTIP_LoRaWAN_UplinkInterval</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">
+                <input type="checkbox" id="LoRaWAN_InitialDatarate_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "InitialDatarate")' unchecked >
+                <label for=LoRaWAN_InitialDatarate_enabled><class id="LoRaWAN_InitialDatarate_text" style="color:black;">Initial Datarate</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_InitialDatarate_value1" step="1" min="0" max="15" value="5"
+                    oninput="(!validity.rangeUnderflow||(value=0)) && (!validity.rangeOverflow||(value=9)) && 
+                        (!validity.stepMismatch||(value=parseInt(this.value)));">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_InitialDatarate</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">
+                <label><class id="LoRaWAN_ADRActive_text" style="color:black;">ADR</class></label>
+            </td>
+            <td>
+                <select id="LoRaWAN_ADRActive_value1">
+                    <option value="true" selected>enabled (true)</option>
+                    <option value="false">disabled (false)</option>
+                </select>
+            </td>
+            <td>$TOOLTIP_LoRaWAN_ADRActive</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">                
+                <label><class id="LoRaWAN_CSMAActive_text" style="color:black;">CSMA</class></label>
+            </td>
+            <td>
+                <select id="LoRaWAN_CSMAActive_value1" onchange="LoRaWANParameterChanged()">
+                    <option value="true" selected>enabled (true)</option>
+                    <option value="false">disabled (false)</option>
+                </select>
+            </td>
+            <td>$TOOLTIP_LoRaWAN_CSMAActive</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_CSMAMaxChanges_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "CSMAMaxChanges")' unchecked >
+                <label for=LoRaWAN_CSMAMaxChanges_enabled><class id="LoRaWAN_CSMAMaxChanges_text" style="color:black;">CSMA Max Changes</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_CSMAMaxChanges_value1" size="13" min="0" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_CSMAMaxChanges</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_CSMABackoffMax_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "CSMABackoffMax")' unchecked >
+                <label for=LoRaWAN_CSMABackoffMax_enabled><class id="LoRaWAN_CSMABackoffMax_text" style="color:black;">CSMA Backoff Max</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_CSMABackoffMax_value1" size="13" min="0" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_CSMABackoffMax</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_CSMADifsSlots_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "CSMADifsSlots")' unchecked >
+                <label for=LoRaWAN_CSMADifsSlots_enabled><class id="LoRaWAN_CSMADifsSlots_text" style="color:black;">CSMA Difs Slots</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_CSMADifsSlots_value1" size="13" min="0" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_CSMADifsSlots</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">               
+                <label><class id="LoRaWAN_DutyCycleLimitsActive_text" style="color:black;">Duty Cycle Limits</class></label>
+            </td>
+            <td>
+                <select id="LoRaWAN_DutyCycleLimitsActive_value1" onchange="LoRaWANParameterChanged()">
+                    <option value="true" selected>enabled (true)</option>
+                    <option value="false">disabled (false)</option>
+                </select>
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DutyCycleLimitsActive</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_DutyCycleMsPerHour_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "DutyCycleMsPerHour")' unchecked >
+                <label for=LoRaWAN_DutyCycleMsPerHour_enabled><class id="LoRaWAN_DutyCycleMsPerHour_text" style="color:black;">Allowed Airtime</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_DutyCycleMsPerHour_value1" size="13" min="0" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">Milliseconds / Hour
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DutyCycleMsPerHour</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">        
+                <label><class id="LoRaWAN_DwellTimeLimitsActive_text" style="color:black;">Dwell Time Limits</class></label>
+            </td>
+            <td>
+                <select id="LoRaWAN_DwellTimeLimitsActive_value1" onchange="LoRaWANParameterChanged()">
+                    <option value="true" selected>enabled (true)</option>
+                    <option value="false">disabled (false)</option>
+                </select>
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DwellTimeLimitsActive</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_DwellTimeMsPerUplink_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "DwellTimeMsPerUplink")' unchecked >
+                <label for=LoRaWAN_DwellTimeMsPerUplink_enabled><class id="LoRaWAN_DwellTimeMsPerUplink_text" style="color:black;">Allowed Airtime</class></label>
+            </td>
+            <td>
+                <input required type="number" id="LoRaWAN_DwellTimeMsPerUplink_value1" size="13" min="0" step="1"
+                    oninput="(!validity.rangeUnderflow) && (!validity.stepMismatch||(value=parseInt(this.value)));">Milliseconds / Uplink
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DwellTimeMsPerUplink</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent1">
+                <label><class id="LoRaWAN_DeviceActivationMethod_text" style="color:black;">Device Activation Method</class></label>
+            </td>
+            <td>
+                <select id="LoRaWAN_DeviceActivationMethod_value1" onchange="LoRaWANParameterChanged()">
+                    <option value="OTAA" selected>OTAA</option>
+                    <option value="ABP">ABP</option>
+                </select>
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DeviceActivationMethod</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2" style="padding-top:25px">
+                <b>OTAA:</b><br>
+            </td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <label><class id="LoRaWAN_JoinEUI_text" style="color:black;">JoinEUI</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_JoinEUI_value1" placeholder="0000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_JoinEUI</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <label><class id="LoRaWAN_DevEUI_text" style="color:black;">DevEUI</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_DevEUI_value1" placeholder="0000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DevEUI</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_NwkKey_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "NwkKey")' unchecked >
+                <label for=LoRaWAN_NwkKey_enabled><class id="LoRaWAN_NwkKey_text" style="color:black;">NwkKey</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_NwkKey_value1" placeholder="00000000000000000000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_NwkKey</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <label><class id="LoRaWAN_AppKey_text" style="color:black;">AppKey</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_AppKey_value1" placeholder="00000000000000000000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_AppKey</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2" style="padding-top:25px">
+                <b>ABP:</b><br>
+            </td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <label><class id="LoRaWAN_DevAddr_text" style="color:black;">DevAddr</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_DevAddr_value1" placeholder="00000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_DevAddr</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_FNwkSIntKey_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "FNwkSIntKey")' unchecked >
+                <label for=LoRaWAN_FNwkSIntKey_enabled><class id="LoRaWAN_FNwkSIntKey_text" style="color:black;">FNwkSIntKey</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_FNwkSIntKey_value1" placeholder="00000000000000000000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_FNwkSIntKey</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <input type="checkbox" id="LoRaWAN_SNwkSIntKey_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "SNwkSIntKey")' unchecked >
+                <label for=LoRaWAN_SNwkSIntKey_enabled><class id="LoRaWAN_SNwkSIntKey_text" style="color:black;">SNwkSIntKey</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_SNwkSIntKey_value1" placeholder="00000000000000000000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_SNwkSIntKey</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <label><class id="LoRaWAN_NwkSEncKey_text" style="color:black;">NwkSEncKey</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_NwkSEncKey_value1" placeholder="00000000000000000000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_NwkSEncKey</td>
+        </tr>
+
+        <tr class="LoRaWANItem">
+            <td class="indent2">
+                <label><class id="LoRaWAN_AppSKey_text" style="color:black;">AppSKey</class></label>
+            </td>
+            <td>
+                <input required type="text" id="LoRaWAN_AppSKey_value1" placeholder="00000000000000000000000000000000">
+            </td>
+            <td>$TOOLTIP_LoRaWAN_AppSKey</td>
+        </tr>
+
         <!------------- GPIO ------------------>
         <tr style="border-bottom: 2px solid lightgray;">
             <td colspan="3" style="padding-left: 0px; padding-bottom: 3px;">
@@ -1957,9 +2255,18 @@
                     <option value="input-pullup">input pullup</option>
                     <option value="input-pulldown">input pulldown</option>
                     <option value="output">output</option>
+                    <option value="built-in-flash-ws281x" select>built-in flash light ws281x controlled</option>
                 </select>
             </td>
             <td>$TOOLTIP_GPIO_IO48</td>
+        </tr>
+
+        <tr class="GPIO_item" style="border-top: 0px;">
+            <td colspan="2" style="padding-left:28px">
+                <b>IMPORTANT NOTE:</b><br>
+                If you'd like to use the built-in flash LED in parallel with other GPIO functionality,
+				you have to explicitely activate the "built-in LED flash light" option on GPIO48.
+            </td>
         </tr>
 
         <tr class="GPIO_IO48 GPIO_item expert">
@@ -2225,6 +2532,58 @@ function cameraParameterChanged() {
     }
 }
 
+function LoRaWANParameterChanged() {
+    if(!document.getElementById("LoRaWAN_CSMAActive_value1").selectedIndex) {
+        EnDisableItem(true, param, category, "LoRaWAN", "CSMAMaxChanges", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "CSMABackoffMax", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "CSMADifsSlots", true);
+    }
+    else {
+        EnDisableItem(false, param, category, "LoRaWAN", "CSMAMaxChanges", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "CSMABackoffMax", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "CSMADifsSlots", true);
+    }
+
+    if(!document.getElementById("LoRaWAN_DutyCycleLimitsActive_value1").selectedIndex) {
+        EnDisableItem(true, param, category, "LoRaWAN", "DutyCycleMsPerHour", true);
+    }
+    else {
+        EnDisableItem(false, param, category, "LoRaWAN", "DutyCycleMsPerHour", true);
+    }
+
+    if(!document.getElementById("LoRaWAN_DwellTimeLimitsActive_value1").selectedIndex) {
+        EnDisableItem(true, param, category, "LoRaWAN", "DwellTimeMsPerUplink", true);
+    }
+    else {
+        EnDisableItem(false, param, category, "LoRaWAN", "DwellTimeMsPerUplink", true);
+    }
+
+    if(document.getElementById("LoRaWAN_DeviceActivationMethod_value1").selectedIndex) {
+        // ABP selected
+        EnDisableItem(true, param, category, "LoRaWAN", "DevAddr", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "FNwkSIntKey", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "SNwkSIntKey", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "NwkSEncKey", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "AppSKey", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "JoinEUI", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "DevEUI", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "NwkKey", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "AppKey", false);
+    }
+    else {
+        // OTAA selected
+        EnDisableItem(true, param, category, "LoRaWAN", "JoinEUI", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "DevEUI", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "NwkKey", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "AppKey", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "DevAddr", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "FNwkSIntKey", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "SNwkSIntKey", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "NwkSEncKey", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "AppSKey", false);		
+    }
+}
+
 function LoadConfigNeu() {
     if (!loadConfig(domainname)) {
         firework.launch('Configuration could not be loaded! Please reload the page!', 'danger', 30000);
@@ -2261,6 +2620,56 @@ function LoadConfigNeu() {
     else {
         EnDisableItem(false, param, category, "TakeImage", "CamSharpness", false);				
     }	
+
+    if(!document.getElementById("LoRaWAN_CSMAActive_value1").selectedIndex) {
+        EnDisableItem(true, param, category, "LoRaWAN", "CSMAMaxChanges", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "CSMABackoffMax", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "CSMADifsSlots", true);
+    }
+    else {
+        EnDisableItem(false, param, category, "LoRaWAN", "CSMAMaxChanges", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "CSMABackoffMax", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "CSMADifsSlots", true);
+    }
+
+    if(!document.getElementById("LoRaWAN_DutyCycleLimitsActive_value1").selectedIndex) {
+        EnDisableItem(true, param, category, "LoRaWAN", "DutyCycleMsPerHour", true);
+    }
+    else {
+        EnDisableItem(false, param, category, "LoRaWAN", "DutyCycleMsPerHour", true);
+    }
+
+    if(!document.getElementById("LoRaWAN_DwellTimeLimitsActive_value1").selectedIndex) {
+        EnDisableItem(true, param, category, "LoRaWAN", "DwellTimeMsPerUplink", true);
+    }
+    else {
+        EnDisableItem(false, param, category, "LoRaWAN", "DwellTimeMsPerUplink", true);
+    }
+
+    if(document.getElementById("LoRaWAN_DeviceActivationMethod_value1").selectedIndex) {
+        // ABP selected
+        EnDisableItem(true, param, category, "LoRaWAN", "DevAddr", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "FNwkSIntKey", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "SNwkSIntKey", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "NwkSEncKey", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "AppSKey", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "JoinEUI", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "DevEUI", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "NwkKey", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "AppKey", false);
+    }
+    else {
+        // OTAA selected
+        EnDisableItem(true, param, category, "LoRaWAN", "JoinEUI", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "DevEUI", false);
+        EnDisableItem(true, param, category, "LoRaWAN", "NwkKey", true);
+        EnDisableItem(true, param, category, "LoRaWAN", "AppKey", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "DevAddr", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "FNwkSIntKey", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "SNwkSIntKey", true);
+        EnDisableItem(false, param, category, "LoRaWAN", "NwkSEncKey", false);
+        EnDisableItem(false, param, category, "LoRaWAN", "AppSKey", false);		
+    }
 }
 
 function InitIndivParameter() {
@@ -2376,6 +2785,9 @@ function UpdateInput() {
     document.getElementById("Category_Webhook_enabled").checked = category["Webhook"]["enabled"];
     setVisible("WebhookItem", category["Webhook"]["enabled"]);
 
+    document.getElementById("Category_LoRaWAN_enabled").checked = category["LoRaWAN"]["enabled"];
+    setVisible("LoRaWANItem", category["LoRaWAN"]["enabled"]);
+
     WriteParameter(param, category, "TakeImage", "RawImagesLocation", true);
     WriteParameter(param, category, "TakeImage", "RawImagesRetention", true);
 
@@ -2461,6 +2873,30 @@ function UpdateInput() {
     WriteParameter(param, category, "Webhook", "ApiKey", true);
     WriteParameter(param, category, "Webhook", "UploadImg", false);
 
+    WriteParameter(param, category, "LoRaWAN", "Region", false);	
+    WriteParameter(param, category, "LoRaWAN", "SubBand", true);
+    WriteParameter(param, category, "LoRaWAN", "UplinkInterval", false);
+    WriteParameter(param, category, "LoRaWAN", "InitialDatarate", true);
+    WriteParameter(param, category, "LoRaWAN", "ADRActive", false);
+    WriteParameter(param, category, "LoRaWAN", "CSMAActive", false);
+    WriteParameter(param, category, "LoRaWAN", "CSMAMaxChanges", true);
+    WriteParameter(param, category, "LoRaWAN", "CSMABackoffMax", true);
+    WriteParameter(param, category, "LoRaWAN", "CSMADifsSlots", true);
+    WriteParameter(param, category, "LoRaWAN", "DutyCycleLimitsActive", false);
+    WriteParameter(param, category, "LoRaWAN", "DutyCycleMsPerHour", true);
+    WriteParameter(param, category, "LoRaWAN", "DwellTimeLimitsActive", false);
+    WriteParameter(param, category, "LoRaWAN", "DwellTimeMsPerUplink", true);
+    WriteParameter(param, category, "LoRaWAN", "DeviceActivationMethod", false);
+    WriteParameter(param, category, "LoRaWAN", "JoinEUI", false);
+    WriteParameter(param, category, "LoRaWAN", "DevEUI", false);
+    WriteParameter(param, category, "LoRaWAN", "NwkKey", true);
+    WriteParameter(param, category, "LoRaWAN", "AppKey", false);
+    WriteParameter(param, category, "LoRaWAN", "DevAddr", false);
+    WriteParameter(param, category, "LoRaWAN", "FNwkSIntKey", true);
+    WriteParameter(param, category, "LoRaWAN", "SNwkSIntKey", true);
+    WriteParameter(param, category, "LoRaWAN", "NwkSEncKey", false);
+    WriteParameter(param, category, "LoRaWAN", "AppSKey", false);
+
     WriteParameter(param, category, "GPIO", "IO0", true);
     WriteParameter(param, category, "GPIO", "IO1", true);
     WriteParameter(param, category, "GPIO", "IO3", true);
@@ -2543,6 +2979,7 @@ function ReadParameterAll() {
     category["InfluxDB"]["enabled"] = document.getElementById("Category_InfluxDB_enabled").checked;
     category["InfluxDBv2"]["enabled"] = document.getElementById("Category_InfluxDBv2_enabled").checked;
     category["Webhook"]["enabled"] = document.getElementById("Category_Webhook_enabled").checked;
+    category["LoRaWAN"]["enabled"] = document.getElementById("Category_LoRaWAN_enabled").checked;
     category["GPIO"]["enabled"] = document.getElementById("Category_GPIO_enabled").checked;
 
     ReadParameter(param, "TakeImage", "RawImagesLocation", true);
@@ -2630,6 +3067,30 @@ function ReadParameterAll() {
     ReadParameter(param, "Webhook", "ApiKey", true);
     ReadParameter(param, "Webhook", "UploadImg", false);
 
+    ReadParameter(param, "LoRaWAN", "Region", false);	
+    ReadParameter(param, "LoRaWAN", "SubBand", true);
+    ReadParameter(param, "LoRaWAN", "UplinkInterval", false);
+    ReadParameter(param, "LoRaWAN", "InitialDatarate", true);
+    ReadParameter(param, "LoRaWAN", "ADRActive", false);
+    ReadParameter(param, "LoRaWAN", "CSMAActive", false);
+    ReadParameter(param, "LoRaWAN", "CSMAMaxChanges", true);
+    ReadParameter(param, "LoRaWAN", "CSMABackoffMax", true);
+    ReadParameter(param, "LoRaWAN", "CSMADifsSlots", true);
+    ReadParameter(param, "LoRaWAN", "DutyCycleLimitsActive", false);
+    ReadParameter(param, "LoRaWAN", "DutyCycleMsPerHour", true);
+    ReadParameter(param, "LoRaWAN", "DwellTimeLimitsActive", false);
+    ReadParameter(param, "LoRaWAN", "DwellTimeMsPerUplink", true);
+    ReadParameter(param, "LoRaWAN", "DeviceActivationMethod", false);
+    ReadParameter(param, "LoRaWAN", "JoinEUI", false);
+    ReadParameter(param, "LoRaWAN", "DevEUI", false);
+    ReadParameter(param, "LoRaWAN", "NwkKey", true);
+    ReadParameter(param, "LoRaWAN", "AppKey", false);
+    ReadParameter(param, "LoRaWAN", "DevAddr", false);
+    ReadParameter(param, "LoRaWAN", "FNwkSIntKey", true);
+    ReadParameter(param, "LoRaWAN", "SNwkSIntKey", true);
+    ReadParameter(param, "LoRaWAN", "NwkSEncKey", false);
+    ReadParameter(param, "LoRaWAN", "AppSKey", false);
+
     ReadParameter(param, "GPIO", "IO0", true);
     ReadParameter(param, "GPIO", "IO1", true);
     ReadParameter(param, "GPIO", "IO3", true);
@@ -2678,6 +3139,7 @@ function UpdateAfterCategoryCheck() {
     category["MQTT"]["enabled"] = document.getElementById("Category_MQTT_enabled").checked;
     category["InfluxDB"]["enabled"] = document.getElementById("Category_InfluxDB_enabled").checked;
     category["InfluxDBv2"]["enabled"] = document.getElementById("Category_InfluxDBv2_enabled").checked;
+    category["LoRaWAN"]["enabled"] = document.getElementById("Category_LoRaWAN_enabled").checked;
     category["GPIO"]["enabled"] = document.getElementById("Category_GPIO_enabled").checked;
     category["Webhook"]["enabled"] = document.getElementById("Category_Webhook_enabled").checked;
 
@@ -2707,7 +3169,7 @@ function UpdateExpertModus() {
         // document.getElementById(expert[i].id).style = _style;
     }
 
-    // Enable / Disable die Optionen in den Menues für die Auswahl. Falls kein Expertenmodus soll nur ein Wert (built-in-led oder externan-flash-ws281x) möglich sein
+    // Enable / Disable die Optionen in den Menues für die Auswahl. Falls kein Expertenmodus soll nur ein Wert (built-in-led oder external-flash-ws281x) möglich sein
     Array.from(document.querySelector("#GPIO_IO4_value1").options).forEach(function(option_element) {
         if (option_element.value != "built-in-led") {
             option_element.hidden = _hidden;

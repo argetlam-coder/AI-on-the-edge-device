@@ -172,18 +172,25 @@ void task_lorawan_communication(void *pvParameter) {
     // Check if a downlink was received 
     // (state 0 = no downlink, state 1/2 = downlink in window Rx1/Rx2)
     if(state > 0) { 
-      if (downlinkSize > 0){
-        uint32_t networkTime = 0;
-        uint8_t fracSecond = 0;
-        if(node->getMacDeviceTimeAns(&networkTime, &fracSecond, true) == RADIOLIB_ERR_NONE) {
-          ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime Unix:\t%lu", networkTime);
-          ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime second:\t1/%u", fracSecond);
-          struct timeval now; 
-          now.tv_sec = networkTime;
-          now.tv_usec = static_cast<long>(fracSecond / 256 * 1000000);
-          settimeofday(&now, NULL);
-        }
+      uint32_t networkTime = 0;
+      uint8_t fracSecond = 0;
+      if(node->getMacDeviceTimeAns(&networkTime, &fracSecond, true) == RADIOLIB_ERR_NONE) {
+        ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime Unix:\t%lu", networkTime);
+        ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime second:\t1/%u", fracSecond);
+        struct timeval now; 
+        now.tv_sec = networkTime;
+        now.tv_usec = static_cast<long>(fracSecond / 256 * 1000000);
+        settimeofday(&now, NULL);
+      }
 
+      uint8_t margin = 0;
+      uint8_t gwCnt = 0;
+      if(node->getMacLinkCheckAns(&margin, &gwCnt) == RADIOLIB_ERR_NONE) {
+        ESP_LOGE(LORAWAN_LOG_TAG, "LinkCheck margin:\t%u",margin);
+        ESP_LOGE(LORAWAN_LOG_TAG, "LinkCheck count:\t%u", gwCnt);
+      }
+
+      if (downlinkSize > 0){
         //check if it is a wifi toggle command
         if (downlinkDetails.fPort == 1 ) {
           if (downlinkPayload[0] == 1){
@@ -237,13 +244,6 @@ void task_lorawan_communication(void *pvParameter) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Port:\t\t%u",downlinkDetails.fPort);
       ESP_LOGE(LORAWAN_LOG_TAG, "Time-on-air:\t\t%lu ms",node->getLastToA());
       ESP_LOGE(LORAWAN_LOG_TAG, "Rx window:\t\t%u",state);
-
-      uint8_t margin = 0;
-      uint8_t gwCnt = 0;
-      if(node->getMacLinkCheckAns(&margin, &gwCnt) == RADIOLIB_ERR_NONE) {
-        ESP_LOGE(LORAWAN_LOG_TAG, "LinkCheck margin:\t%u",margin);
-        ESP_LOGE(LORAWAN_LOG_TAG, "LinkCheck count:\t%u", gwCnt);
-      }
     } else {
       ESP_LOGE(LORAWAN_LOG_TAG, "No downlink received");
     }
@@ -422,7 +422,6 @@ int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterv
     LoRaWANNode node(&radio, &US915, 2);
   */
   node = new LoRaWANNode(&radio, &region, subBand);
-
  
   int16_t state = 0;  						// return value for calls to RadioLib
 

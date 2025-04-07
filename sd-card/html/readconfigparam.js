@@ -238,6 +238,35 @@ function ParseConfig() {
     ParamAddValue(param, catname, "ApiKey");
     ParamAddValue(param, catname, "UploadImg");
 
+    var catname = "LoRaWAN";
+    category[catname] = new Object();
+    category[catname]["enabled"] = false;
+    category[catname]["found"] = false;
+    param[catname] = new Object();
+    ParamAddValue(param, catname, "Region");
+    ParamAddValue(param, catname, "SubBand");
+    ParamAddValue(param, catname, "UplinkInterval");
+    ParamAddValue(param, catname, "InitialDatarate");
+    ParamAddValue(param, catname, "ADRActive");
+    ParamAddValue(param, catname, "CSMAActive");
+    ParamAddValue(param, catname, "CSMAMaxChanges");
+    ParamAddValue(param, catname, "CSMABackoffMax");
+    ParamAddValue(param, catname, "CSMADifsSlots");
+    ParamAddValue(param, catname, "DutyCycleLimitsActive");
+    ParamAddValue(param, catname, "DutyCycleMsPerHour");
+    ParamAddValue(param, catname, "DwellTimeLimitsActive");
+    ParamAddValue(param, catname, "DwellTimeMsPerUplink");
+    ParamAddValue(param, catname, "DeviceActivationMethod");
+    ParamAddValue(param, catname, "JoinEUI");
+    ParamAddValue(param, catname, "DevEUI");
+    ParamAddValue(param, catname, "NwkKey");
+    ParamAddValue(param, catname, "AppKey");
+    ParamAddValue(param, catname, "DevAddr");
+    ParamAddValue(param, catname, "FNwkSIntKey");
+    ParamAddValue(param, catname, "SNwkSIntKey");
+    ParamAddValue(param, catname, "NwkSEncKey");
+    ParamAddValue(param, catname, "AppSKey");
+
     var catname = "GPIO";
     category[catname] = new Object();
     category[catname]["enabled"] = false;

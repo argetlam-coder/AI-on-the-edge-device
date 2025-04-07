@@ -215,48 +215,88 @@ bool ClassFlowLoRaWAN::ReadParameter(FILE* pfile, string& aktparamgraph)
         // OTAA parameters
         if ((toUpper(_param) == "JOINEUI") && (splitted.size() > 1))
         {
-            this->joinEUI = std::strtoull(splitted[1].c_str(),NULL,16);
+            if (splitted[1] != "undefined") {
+                this->joinEUI = std::strtoull(splitted[1].c_str(),NULL,16);
+            } else {
+                this->joinEUI = NULL;
+            }
         }
         if ((toUpper(_param) == "DEVEUI") && (splitted.size() > 1))
         {
-            this->devEUI = std::strtoull(splitted[1].c_str(),NULL,16);
+            if (splitted[1] != "undefined") {
+                this->devEUI = std::strtoull(splitted[1].c_str(),NULL,16);
+            } else {
+                this->devEUI = NULL;
+            }
         }
         if ((toUpper(_param) == "NWKKEY") && (splitted.size() > 1))
-        {
-            std::vector<uint8_t> nwkKeyVector = hexStringToByteArray(splitted[1]);
-            this->nwkKey = new uint8_t[16];
-            copy(nwkKeyVector.begin(), nwkKeyVector.end(), this->nwkKey);
+        {           
+            if (splitted[1] != "undefined") {
+                this->nwkKey = new uint8_t[16];
+                std::vector<uint8_t> nwkKeyVector = hexStringToByteArray(splitted[1]);
+                copy(nwkKeyVector.begin(), nwkKeyVector.end(), this->nwkKey);
+            } else {
+                this->nwkKey = NULL;
+            }
         }
         if ((toUpper(_param) == "APPKEY") && (splitted.size() > 1))
-        {
-            std::vector<uint8_t> appKeyVector = hexStringToByteArray(splitted[1]);
-            this->appKey = new uint8_t[16];
-            copy(appKeyVector.begin(), appKeyVector.end(), this->appKey);
+        {          
+            if (splitted[1] != "undefined") {
+                this->appKey = new uint8_t[16];
+                std::vector<uint8_t> appKeyVector = hexStringToByteArray(splitted[1]);
+                copy(appKeyVector.begin(), appKeyVector.end(), this->appKey);
+            } else {
+                this->appKey = NULL;
+            }
         }
         // ABP parameters
         if ((toUpper(_param) == "DEVADDR") && (splitted.size() > 1))
         {
-            this->devAddr = std::strtoull(splitted[1].c_str(),NULL,16);
+            if (splitted[1] != "undefined") {
+                this->devAddr = std::strtoull(splitted[1].c_str(),NULL,16);
+            } else {
+                this->devAddr = NULL;
+            }
         }
         if ((toUpper(_param) == "FNWKSINTKEY") && (splitted.size() > 1))
         {
-            std::vector<uint8_t> fNwkSIntKeyVector = hexStringToByteArray(splitted[1]);
-            copy(fNwkSIntKeyVector.begin(), fNwkSIntKeyVector.end(), this->fNwkSIntKey);
+            if (splitted[1] != "undefined") {
+                this->fNwkSIntKey = new uint8_t[16];
+                std::vector<uint8_t> fNwkSIntKeyVector = hexStringToByteArray(splitted[1]);
+                copy(fNwkSIntKeyVector.begin(), fNwkSIntKeyVector.end(), this->fNwkSIntKey);
+            } else {
+                this->fNwkSIntKey = NULL;
+            }
         }
         if ((toUpper(_param) == "SNWKSINTKEY") && (splitted.size() > 1))
-        {
-            std::vector<uint8_t> sNwkSIntKeyVector = hexStringToByteArray(splitted[1]);
-            copy(sNwkSIntKeyVector.begin(), sNwkSIntKeyVector.end(), this->sNwkSIntKey);
+        {        
+            if (splitted[1] != "undefined") {
+                this->sNwkSIntKey = new uint8_t[16];
+                std::vector<uint8_t> sNwkSIntKeyVector = hexStringToByteArray(splitted[1]);
+                copy(sNwkSIntKeyVector.begin(), sNwkSIntKeyVector.end(), this->sNwkSIntKey);
+            } else {
+                this->sNwkSIntKey = NULL;
+            }
         }
         if ((toUpper(_param) == "NWKSENCKEY") && (splitted.size() > 1))
-        {
-            std::vector<uint8_t> nwkSEncKeyVector = hexStringToByteArray(splitted[1]);
-            copy(nwkSEncKeyVector.begin(), nwkSEncKeyVector.end(), this->nwkSEncKey);
+        {           
+            if (splitted[1] != "undefined") {
+                this->nwkSEncKey = new uint8_t[16];
+                std::vector<uint8_t> nwkSEncKeyVector = hexStringToByteArray(splitted[1]);
+                copy(nwkSEncKeyVector.begin(), nwkSEncKeyVector.end(), this->nwkSEncKey);
+            } else {
+                this->nwkSEncKey = NULL;
+            }
         }
         if ((toUpper(_param) == "APPSKEY") && (splitted.size() > 1))
-        {
-            std::vector<uint8_t> appSKeyVector = hexStringToByteArray(splitted[1]);
-            copy(appSKeyVector.begin(), appSKeyVector.end(), this->appSKey);
+        {         
+            if (splitted[1] != "undefined") {
+                this->appSKey = new uint8_t[16];
+                std::vector<uint8_t> appSKeyVector = hexStringToByteArray(splitted[1]);
+                copy(appSKeyVector.begin(), appSKeyVector.end(), this->appSKey);
+            } else {
+                this->appSKey = NULL;
+            }
         }
     }
 
