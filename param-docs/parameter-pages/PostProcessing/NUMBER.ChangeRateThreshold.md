@@ -10,18 +10,18 @@ It is only applied to the last digit of the read value (See example below).
 If the read value is within PreValue +/- Threshold, no further calculation is carried out and the Value/Prevalue remains at the old value.
 
 !!! Note
-    This parameter must be prefixed with `<NUMBER>` followed by a dot (eg. `main.ChangeRateThreshold`). `<NUMBER>` is the name of the number sequence  defined in the ROI's.
+    If you edit the config file manually, you must prefix this parameter with `<NUMBER>` followed by a dot (eg. `main.ChangeRateThreshold`). The reason is that this parameter is specific for each `<NUMBER>` (`<NUMBER>` is the name of the number sequence defined in the ROI's).
 
 ## Example
 
 - Smallest ROI provides value for `0.000'x` (Eg. a water meter with 4 pointers behind the decimal point)
 - ChangeRateThreshold = 2
   
-#### With `Extended Resolution` **disabled**
+#### With `ExtendedResolution` **disabled**
 PreValue: `123.456'7` -> Threshold = `+/-0.000'2`.<br>
 All changes between `123.456'5` and `123.456'9` get ignored
 	
-#### With `Extended Resolution` **enabled**
+#### With `ExtendedResolution` **enabled**
 PreValue: `123.456'78` -> Threshold = `+/-0.000'02`.<br>
 All changes between `123.456'76` and `123.456'80` get ignored.
 
