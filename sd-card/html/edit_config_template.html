@@ -1183,15 +1183,16 @@
                 <select class="select_large" id="MQTT_MeterType_value1"> <!-- See https://developers.home-assistant.io/docs/core/entity/sensor/#available-device-classes -->
                     <option value="other" selected>Other (no Units)</option>
                     <option value="water_m3">Watermeter (Value: m³, Rate: m³/h)</option>
-                    <option value="water_l">Watermeter (Value: l, Rate: l/h) *Not officially supported by Homeassistant!*</option>
-                    <option value="water_gal">Watermeter (Value: gal, Rate: gal/h) *Not officially supported by Homeassistant!*</option>
+                    <option value="water_l">Watermeter (Value: l, Rate: l/h)    ⚠️ Not supported by Homeassistant 2025.7 and later! ⚠️</option>
+                    <option value="water_gal">Watermeter (Value: gal, Rate: gal/h)    ⚠️ Not supported by Homeassistant 2025.7 and later! ⚠️</option>
+                    <option value="water_gal_min">Watermeter (Value: gal, Rate: gal/min)</option>
                     <option value="water_ft3">Watermeter (Value: ft³, Rate: ft³/min)</option>
                     <option value="gas_m3">Gasmeter (Value: m³, Rate: m³/h)</option>
                     <option value="gas_ft3">Gasmeter (Value: ft³, Rate: ft³/min)</option>
                     <option value="energy_wh">Energymeter (Value: Wh, Rate: W)</option>
                     <option value="energy_kwh">Energymeter (Value: kWh, Rate: kW)</option>
                     <option value="energy_mwh">Energymeter (Value: MWh, Rate: MW)</option>
-                    <option value="energy_gj">Energymeter (Value: GJ, Rate: GJ/h) *Not officially supported by Homeassistant!*</option>
+                    <option value="energy_gj">Energymeter (Value: GJ, Rate: GJ/h)    ⚠️ Not supported by Homeassistant 2025.7 and later! ⚠️</option>
                     <option value="temperature_c">Thermometer (Value: °C, Rate: °C/min)</option>
                     <option value="temperature_c">Thermometer (Value: °F, Rate: °F/min)</option>
                     <option value="temperature_c">Thermometer (Value: K, Rate: K/min)</option>
@@ -2676,7 +2677,19 @@ function saveTextAsFile() {
 	WriteConfigININew();
 	SaveConfigToServer(domainname);
 
-	firework.launch('Configuration saved. It will get applied after the next reboot!<br><br>\n<a id="reboot_button" onclick="doReboot()">reboot now</a>', 'success', 5000);
+    if(window.location.hash) {
+        var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
+		
+        if(hash == 'description') {
+            firework.launch('Configuration saved.', 'success', 2000);
+        }
+		else {
+	        firework.launch('Configuration saved. It will get applied after the next reboot!<br><br>\n<a id="reboot_button" onclick="doReboot()">reboot now</a>', 'success', 5000);
+	    }
+    }
+	else {
+	    firework.launch('Configuration saved. It will get applied after the next reboot!<br><br>\n<a id="reboot_button" onclick="doReboot()">reboot now</a>', 'success', 5000);
+	}
 
 	if (changeCamValue == 1) {
 		camSettingsSet();
@@ -3331,7 +3344,7 @@ function openDescription() {
 		
         if(hash == 'description') {
             document.getElementById("desc_details").open = true;
-            document.getElementById("reboot").style.display = "none";
+            // document.getElementById("reboot").style.display = "none";
             document.getElementById("reboot_text").style.display = "none";
         }
     }
