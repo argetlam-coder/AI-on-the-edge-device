@@ -18,7 +18,7 @@ void ClassFlowLoRaWAN::SetInitialParameter(void)
       region = EU868;
       subBand = 0;
       uplinkInterval = 60;
-      initialDatarate = RADIOLIB_LORAWAN_DATA_RATE_UNUSED;
+      fixedDatarate = RADIOLIB_LORAWAN_DATA_RATE_UNUSED;
       ADRActive = true;
       CSMAActive = false;
       CSMAMaxChanges = 4;
@@ -156,9 +156,9 @@ bool ClassFlowLoRaWAN::ReadParameter(FILE* pfile, string& aktparamgraph)
         {
             this->uplinkInterval = std::strtoul(splitted[1].c_str(), NULL, 10);
         }
-        if ((toUpper(_param) == "INITIALDATARATE") && (splitted.size() > 1))
+        if ((toUpper(_param) == "FIXEDDATARATE") && (splitted.size() > 1))
         {
-            this->initialDatarate = std::strtoul(splitted[1].c_str(), NULL, 10);
+            this->fixedDatarate = std::strtoul(splitted[1].c_str(), NULL, 10);
         }
         if ((toUpper(_param) == "ADRACTIVE") && (splitted.size() > 1))
         {
@@ -308,7 +308,7 @@ bool ClassFlowLoRaWAN::Start(float AutoInterval)
     LogFile.WriteToFile(ESP_LOG_DEBUG, TAG, "Starting LoRaWAN communication");
 
     roundInterval = AutoInterval; // Minutes
-    uint16_t LoRaWANInitializeCheck = LoRaWAN_Init(region, subBand, roundInterval, uplinkInterval, initialDatarate, ADRActive,
+    uint16_t LoRaWANInitializeCheck = LoRaWAN_Init(region, subBand, roundInterval, uplinkInterval, fixedDatarate, ADRActive,
                                                 CSMAActive,  CSMAMaxChanges, CSMABackoffMax, CSMADifsSlots,
                                                 dutyCycleLimitsActive, dutyCycleMsPerHour, dwellTimeLimitsActive, dwellTimeMsPerUplink,
                                                 deviceActivationMethod, 

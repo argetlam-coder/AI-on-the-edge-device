@@ -9,7 +9,7 @@ enum DeviceActivcationMethod {
   ABP
 };
 
-int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterval, uint32_t _uplinkInterval, uint8_t _initialDatarate, bool _ADRActive, 
+int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterval, uint32_t _uplinkInterval, uint8_t _fixedDatarate, bool _ADRActive, 
                   bool _CSMAActive, uint8_t _CSMAMaxChanges, uint8_t _CSMABackoffMax, uint8_t _CSMADifsSlots, 
                   bool _dutyCycleLimitsActive, RadioLibTime_t _dutyCycleMsPerHour, bool _dwellTimeLimitsActive, RadioLibTime_t _dwellTimeMsPerUplink,
                   DeviceActivcationMethod _deviceActivationMethod, 

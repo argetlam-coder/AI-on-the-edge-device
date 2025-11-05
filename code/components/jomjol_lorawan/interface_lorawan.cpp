@@ -4,6 +4,7 @@
 #include <esp_task_wdt.h>
 #include "esp_wifi.h"
 #include "esp_log.h"
+#include "ClassLogFile.h"
 #include "MainFlowControl.h"
 #include "../../include/defines.h"
 
@@ -37,7 +38,7 @@ LoRaWANBand_t region;
 uint8_t subBand;
 float flowRoundInterval;
 uint32_t uplinkInterval;
-uint8_t initialDatarate;
+uint8_t fixedDatarate;
 bool ADRActive;
 bool CSMAActive;
 uint8_t CSMAMaxChanges;
@@ -78,10 +79,13 @@ void task_lorawan_communication(void *pvParameter) {
   while (1)
   {  
     ESP_LOGE(LORAWAN_LOG_TAG, "Loop started");
+    LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Loop started");
+
     int state = RADIOLIB_ERR_NONE;
 
     while (LoRaWANMessageQueue.empty()) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Message queue is empty. Trying again in 10 seconds");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Message queue is empty. Trying again in 10 seconds");
       hal->delay(10000);
     }
 
@@ -151,11 +155,13 @@ void task_lorawan_communication(void *pvParameter) {
     // retrieve the last uplink frame counter
     uint32_t fcntUp = node->getFCntUp();
 
-    ESP_LOGE(LORAWAN_LOG_TAG, "Sending uplink packet and receiving downlink ...");  
+    ESP_LOGE(LORAWAN_LOG_TAG, "Sending uplink packet and receiving downlink ...");
+    LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Sending uplink packet and receiving downlink ...");  
     // Send a confirmed uplink every 64th frame
     // and also request the LinkCheck and DeviceTime MAC commands
     if(fcntUp % 64 == 0) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Requesting LinkCheck and DeviceTime");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Requesting LinkCheck and DeviceTime");  
       node->sendMacCommandReq(RADIOLIB_LORAWAN_MAC_LINK_CHECK);
       node->sendMacCommandReq(RADIOLIB_LORAWAN_MAC_DEVICE_TIME);
       state = node->sendReceive(uplinkPayload, uplinkLen, fPort, downlinkPayload, &downlinkSize, true, &uplinkDetails, &downlinkDetails); 
@@ -164,19 +170,23 @@ void task_lorawan_communication(void *pvParameter) {
     }
     if(state >= RADIOLIB_ERR_NONE) {
       ESP_LOGE(LORAWAN_LOG_TAG, "success!");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"success!");
       LoRaWANMessageQueue.erase(LoRaWANMessageQueue.begin());
     } else {
       ESP_LOGE(LORAWAN_LOG_TAG, "failed, code %i", state);
+      LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG,"Sending uplink packet and receiving downlink failed! Error code: " + std::to_string(state));
     }
     
     // Check if a downlink was received 
     // (state 0 = no downlink, state 1/2 = downlink in window Rx1/Rx2)
     if(state > 0) { 
       uint32_t networkTime = 0;
-      uint8_t fracSecond = 0;
+      uint16_t fracSecond = 0;
       if(node->getMacDeviceTimeAns(&networkTime, &fracSecond, true) == RADIOLIB_ERR_NONE) {
         ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime Unix:\t%lu", networkTime);
+        LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"DeviceTime Unix:\t" + std::to_string(networkTime));
         ESP_LOGE(LORAWAN_LOG_TAG, "DeviceTime second:\t1/%u", fracSecond);
+        LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"DeviceTime second:\t1/" + std::to_string(fracSecond));
         struct timeval now; 
         now.tv_sec = networkTime;
         now.tv_usec = static_cast<long>(fracSecond / 256 * 1000000);
@@ -195,9 +205,11 @@ void task_lorawan_communication(void *pvParameter) {
         if (downlinkDetails.fPort == 1 ) {
           if (downlinkPayload[0] == 1){
             ESP_LOGE(LORAWAN_LOG_TAG, "Trurning Wifi on");
+            LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Trurning Wifi on");
             esp_wifi_start();
           } else if (downlinkPayload[0]  == 0) {
             ESP_LOGE(LORAWAN_LOG_TAG, "Trurning Wifi off");
+            LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Trurning Wifi off");
             esp_wifi_stop();
           }
         }
@@ -212,16 +224,19 @@ void task_lorawan_communication(void *pvParameter) {
               ((uint8_t *)&previousValue)[i] = downlinkPayload[1 + i];
               
             ESP_LOGE(LORAWAN_LOG_TAG, "Setting previous value to: %lf", previousValue);
+            LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"Setting previous value to: " + std::to_string(previousValue));
 
             std::vector<NumberPost*> numbers = flowctrl.getNumbers();
             if (numbers.size() > numberIndex - 1) {
               flowctrl.UpdatePrevalue(std::to_string(previousValue), numbers[numberIndex - 1]->name, true);
             } else {
               ESP_LOGE(LORAWAN_LOG_TAG, "A number with this index does not exist. Previous value cannot be set!");
+              LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG,"A number with this index does not exist. Previous value cannot be set!");
             }
         }
       } else {
         ESP_LOGE(LORAWAN_LOG_TAG, "<MAC commands only>");
+        LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG,"MAC commands only");
       }
 
       // print RSSI (Received Signal Strength Indicator)
@@ -246,6 +261,7 @@ void task_lorawan_communication(void *pvParameter) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Rx window:\t\t%u",state);
     } else {
       ESP_LOGE(LORAWAN_LOG_TAG, "No downlink received");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "No downlink received");
     }
 
     // now save session to RTC memory
@@ -260,6 +276,7 @@ void task_lorawan_communication(void *pvParameter) {
     uint32_t delayMs = std::max(interval, minimumDelay); // cannot send faster than duty cycle allows
 
     ESP_LOGE(LORAWAN_LOG_TAG, "Next uplink in %lu seconds", delayMs / 1000UL);
+    LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Next uplink in " + std::to_string(delayMs / 1000UL) + " seconds");
 
     hal->delay(delayMs);
   }
@@ -286,8 +303,10 @@ int16_t lwActivate() {
     state = node->setBufferNonces(buffer); 															                                // send them to LoRaWAN
     if(state == RADIOLIB_ERR_NONE) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Successfully restored nonces buffer");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Successfully restored nonces buffer");
     } else {
       ESP_LOGE(LORAWAN_LOG_TAG, "Restoring nonces buffer failed");
+      LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Restoring nonces buffer failed");
     }
 
     // recall session from RTC deep-sleep preserved variable
@@ -297,28 +316,39 @@ int16_t lwActivate() {
     // otherwise no point saying there's been a failure when it was bound to fail with an empty LWsession var.
     if ((state != RADIOLIB_ERR_NONE) && (bootCount > 1)) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Restoring session buffer failed, code %i", state);
+      LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Restoring session buffer failed, code " + std::to_string(state));
     }
 
     // if Nonces and Session restored successfully, activation is just a formality
     // moreover, Nonces didn't change so no need to re-save them
     if (state == RADIOLIB_ERR_NONE) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Succesfully restored session - now activating");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Succesfully restored session - now activating");
       if (deviceActivationMethod == DeviceActivcationMethod::OTAA) {
-        state = node->activateOTAA(initialDatarate);
+        if (!ADRActive) {
+          node->setDatarate(fixedDatarate);
+        }
+        state = node->activateOTAA();
       } 
       if (deviceActivationMethod == DeviceActivcationMethod::ABP) {
-        state = node->activateABP(initialDatarate);
+        if (!ADRActive) {
+          node->setDatarate(fixedDatarate);
+        }
+        state = node->activateABP();
       }     
       if (state != RADIOLIB_LORAWAN_SESSION_RESTORED) {
         ESP_LOGE(LORAWAN_LOG_TAG, "Failed to activate restored session, code %i", state);
+        LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Failed to activate restored session, code " + std::to_string(state));
       }
 
       return(state);
     }
   } else if (status == ESP_ERR_NVS_NOT_FOUND){
     ESP_LOGE(LORAWAN_LOG_TAG, "It seems that no nonces are stored");
+    LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "It seems that no nonces are stored");
   } else {
     ESP_LOGE(LORAWAN_LOG_TAG, "Something went wrong while restoring the nonces");
+    LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Something went wrong while restoring the nonces");
   }
 #endif
   
@@ -327,19 +357,29 @@ int16_t lwActivate() {
   // loop until successful join
   while (state != RADIOLIB_LORAWAN_NEW_SESSION) {
     ESP_LOGE(LORAWAN_LOG_TAG, "Join ('login') to the LoRaWAN Network");
+    LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Join ('login') to the LoRaWAN Network");
     if (deviceActivationMethod == DeviceActivcationMethod::OTAA) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Joining LoRaWAN network via OTAA");
-      state = node->activateOTAA(initialDatarate);
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Joining LoRaWAN network via OTAA");
+      if (!ADRActive) {
+          node->setDatarate(fixedDatarate);
+        }
+      state = node->activateOTAA();
     } 
     if (deviceActivationMethod == DeviceActivcationMethod::ABP) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Joining LoRaWAN network via ABP");
-      state = node->activateABP(initialDatarate);
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Joining LoRaWAN network via ABP");
+      if (!ADRActive) {
+          node->setDatarate(fixedDatarate);
+        }
+      state = node->activateABP();
     }   
 
 #ifdef LORAWAN_USE_PERSISTENT_STORAGE
     if (state == RADIOLIB_LORAWAN_NEW_SESSION) {
       // save the join counters (nonces) to permanent store
       ESP_LOGE(LORAWAN_LOG_TAG, "Saving nonces to flash");
+      LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Saving nonces to flash");
       uint8_t buffer[RADIOLIB_LORAWAN_NONCES_BUF_SIZE];           // create somewhere to store nonces
       uint8_t *persist = node->getBufferNonces();                  // get pointer to nonces
       memcpy(buffer, persist, RADIOLIB_LORAWAN_NONCES_BUF_SIZE);  // copy in to buffer
@@ -351,19 +391,23 @@ int16_t lwActivate() {
 
     if (state != RADIOLIB_LORAWAN_NEW_SESSION) {
       ESP_LOGE(LORAWAN_LOG_TAG, "Join failed: %i", state);
+      LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Join failed: " + std::to_string(state));
       // how long to wait before join attempts. This is an interim solution pending 
       // implementation of TS001 LoRaWAN Specification section #7 - this doc applies to v1.0.4 & v1.1
       // it sleeps for longer & longer durations to give time for any gateway issues to resolve
       // or whatever is interfering with the device <-> gateway airwaves.
       uint32_t sleepForSeconds = std::min((bootCountSinceUnsuccessfulJoin++ + 1UL) * 60UL, 3UL * 60UL);
       ESP_LOGE(LORAWAN_LOG_TAG, "Boots since unsuccessful join: %u", bootCountSinceUnsuccessfulJoin);
+      LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Boots since unsuccessful join: " + std::to_string(bootCountSinceUnsuccessfulJoin));
       ESP_LOGE(LORAWAN_LOG_TAG, "Retrying join in %lu seconds", sleepForSeconds);
+      LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "Retrying join in " + std::to_string(sleepForSeconds) + " seconds");
 
       hal->delay(sleepForSeconds*1000);
 
     } // if activateOTAA state
   } // while join
   ESP_LOGE(LORAWAN_LOG_TAG, "Joined");
+  LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "Joined");
 
   // reset the failed join count
   bootCountSinceUnsuccessfulJoin = 0;
@@ -371,10 +415,12 @@ int16_t lwActivate() {
   hal->delay(1000);  // hold off off hitting the airwaves again too soon - an issue in the US
 
   ESP_LOGE(LORAWAN_LOG_TAG, "DevAddr: %lu",node->getDevAddr());
+  LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "DevAddr: " + std::to_string(node->getDevAddr()));
+
   return(state);
 }
 
-int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterval, uint32_t _uplinkInterval, uint8_t _initialDatarate, bool _ADRActive, 
+int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterval, uint32_t _uplinkInterval, uint8_t _fixedDatarate, bool _ADRActive, 
                 bool _CSMAActive, uint8_t _CSMAMaxChanges, uint8_t _CSMABackoffMax, uint8_t _CSMADifsSlots, 
                 bool _dutyCycleLimitsActive, RadioLibTime_t _dutyCycleMsPerHour, bool _dwellTimeLimitsActive, RadioLibTime_t _dwellTimeMsPerUplink,
                 DeviceActivcationMethod _deviceActivationMethod, 
@@ -384,7 +430,7 @@ int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterv
   subBand = _subBand;
   flowRoundInterval = _roundInterval;
   uplinkInterval = _uplinkInterval;
-  initialDatarate = _initialDatarate;
+  fixedDatarate = _fixedDatarate;
   ADRActive = _ADRActive;
   CSMAActive = _CSMAActive;
   CSMAMaxChanges = _CSMAMaxChanges;
@@ -427,11 +473,14 @@ int16_t LoRaWAN_Init(LoRaWANBand_t _region, uint8_t _subBand, float _roundInterv
 
   // initialize radio based on configured pinmap
   ESP_LOGE(LORAWAN_LOG_TAG, "[Radio] Initializing radio ... ");
+  LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "[Radio] Initializing radio ... ");
   state = radio.begin();
   if(state == RADIOLIB_ERR_NONE) {
     ESP_LOGE(LORAWAN_LOG_TAG, "success!");
+    LogFile.WriteToFile(ESP_LOG_DEBUG, LORAWAN_LOG_TAG, "success!");
   } else {
     ESP_LOGE(LORAWAN_LOG_TAG, "failed, code %i",state);
+    LogFile.WriteToFile(ESP_LOG_ERROR, LORAWAN_LOG_TAG, "[Radio] Initializing radio failed, code  " + std::to_string(state));
     while(true);
   }
 

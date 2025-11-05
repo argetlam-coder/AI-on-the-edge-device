@@ -246,7 +246,7 @@ function ParseConfig() {
     ParamAddValue(param, catname, "Region");
     ParamAddValue(param, catname, "SubBand");
     ParamAddValue(param, catname, "UplinkInterval");
-    ParamAddValue(param, catname, "InitialDatarate");
+    ParamAddValue(param, catname, "FixedDatarate");
     ParamAddValue(param, catname, "ADRActive");
     ParamAddValue(param, catname, "CSMAActive");
     ParamAddValue(param, catname, "CSMAMaxChanges");

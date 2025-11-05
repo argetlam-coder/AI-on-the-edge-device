@@ -23,7 +23,7 @@ protected:
       uint8_t subBand;
       float roundInterval; // Minutes
       uint32_t uplinkInterval;
-      uint8_t initialDatarate;
+      uint8_t fixedDatarate;
       bool ADRActive;
       bool CSMAActive;
       uint8_t CSMAMaxChanges;

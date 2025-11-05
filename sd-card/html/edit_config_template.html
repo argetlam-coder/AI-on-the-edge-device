@@ -1500,15 +1500,15 @@
 
         <tr class="LoRaWANItem">
             <td class="indent1">
-                <input type="checkbox" id="LoRaWAN_InitialDatarate_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "InitialDatarate")' unchecked >
-                <label for=LoRaWAN_InitialDatarate_enabled><class id="LoRaWAN_InitialDatarate_text" style="color:black;">Initial Datarate</class></label>
+                <input type="checkbox" id="LoRaWAN_FixedDatarate_enabled" value="1"  onclick = 'InvertEnableItem("LoRaWAN", "FixedDatarate")' unchecked >
+                <label for=LoRaWAN_FixedDatarate_enabled><class id="LoRaWAN_FixedDatarate_text" style="color:black;">Fixed Datarate</class></label>
             </td>
             <td>
-                <input required type="number" id="LoRaWAN_InitialDatarate_value1" step="1" min="0" max="15" value="5"
+                <input required type="number" id="LoRaWAN_FixedDatarate_value1" step="1" min="0" max="15" value="5"
                     oninput="(!validity.rangeUnderflow||(value=0)) && (!validity.rangeOverflow||(value=9)) && 
                         (!validity.stepMismatch||(value=parseInt(this.value)));">
             </td>
-            <td>$TOOLTIP_LoRaWAN_InitialDatarate</td>
+            <td>$TOOLTIP_LoRaWAN_FixedDatarate</td>
         </tr>
 
         <tr class="LoRaWANItem">
@@ -2877,7 +2877,7 @@ function UpdateInput() {
     WriteParameter(param, category, "LoRaWAN", "Region", false);	
     WriteParameter(param, category, "LoRaWAN", "SubBand", true);
     WriteParameter(param, category, "LoRaWAN", "UplinkInterval", false);
-    WriteParameter(param, category, "LoRaWAN", "InitialDatarate", true);
+    WriteParameter(param, category, "LoRaWAN", "FixedDatarate", true);
     WriteParameter(param, category, "LoRaWAN", "ADRActive", false);
     WriteParameter(param, category, "LoRaWAN", "CSMAActive", false);
     WriteParameter(param, category, "LoRaWAN", "CSMAMaxChanges", true);
@@ -3071,7 +3071,7 @@ function ReadParameterAll() {
     ReadParameter(param, "LoRaWAN", "Region", false);	
     ReadParameter(param, "LoRaWAN", "SubBand", true);
     ReadParameter(param, "LoRaWAN", "UplinkInterval", false);
-    ReadParameter(param, "LoRaWAN", "InitialDatarate", true);
+    ReadParameter(param, "LoRaWAN", "FixedDatarate", true);
     ReadParameter(param, "LoRaWAN", "ADRActive", false);
     ReadParameter(param, "LoRaWAN", "CSMAActive", false);
     ReadParameter(param, "LoRaWAN", "CSMAMaxChanges", true);
