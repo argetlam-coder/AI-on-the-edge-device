@@ -133,8 +133,8 @@ bool ClassFlowLoRaWAN::ReadParameter(FILE* pfile, string& aktparamgraph)
                 region = EU433;
             if (splitted[1] == "AU915")
                 region = AU915;
-            if (splitted[1] == "CN500")
-                region = CN500;
+            if (splitted[1] == "CN470")
+                region = CN470;
             if (splitted[1] == "AS923")
                 region = AS923;
             if (splitted[1] == "AS923_2")
@@ -340,6 +340,8 @@ bool ClassFlowLoRaWAN::doFlow(string zwtime)
     std::string resulttimestamp = "";        
     time_t resulttimeutc = 0;
     string namenumber = "";
+    double resultValue = -1;
+    double resultrateValue = -1;
 
     if (flowpostprocessing && getLoRaWANisSessionActive())
     {
@@ -355,10 +357,21 @@ bool ClassFlowLoRaWAN::doFlow(string zwtime)
 
             namenumber = (*NUMBERS)[i]->name;
 
+            if (result == "") {
+                resultValue = -1;
+            } else {
+                resultValue = std::stod(result);
+            }
+
+            if (resultrate == "") {
+                resultrateValue = -1;
+            } else {
+                resultrateValue = std::stod(resultrate);
+            }
+
             if (resulterror == "no error") {
                 resulterrorCode = 0;
-            }
-            else{
+            } else {
                 if (resulterror.rfind("Neg. Rate", 0) == 0){
                     resulterrorCode = 1;
                 }
@@ -368,7 +381,7 @@ bool ClassFlowLoRaWAN::doFlow(string zwtime)
             }
 
             if (result.length() > 0)  {} 
-                LoRaWANQueueMessage(i, resulttimeutc, std::stod(result), std::stod(resultrate), resulterrorCode);
+                LoRaWANQueueMessage(i, resulttimeutc, resultValue, resultrateValue, resulterrorCode);
         }
     }
     
