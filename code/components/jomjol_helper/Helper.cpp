@@ -828,7 +828,6 @@ float temperatureRead()
     return -1.0;
 }
 #endif
-}
 
 time_t addDays(time_t startTime, int days)
 {
