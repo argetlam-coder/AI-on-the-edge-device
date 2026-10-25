@@ -14,3 +14,4 @@ sdkconfig.esp32cam-board-rev3-cpu-freq-240
 sdkconfig.esp32cam-dev-himem
 sdkconfig.esp32cam-dev-task-analysis
 sdkconfig.esp32cam-no-softap
+sdkconfig.esp32-s3-wroom-1
