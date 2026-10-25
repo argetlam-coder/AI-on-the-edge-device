@@ -1,0 +1,2 @@
+# Freenove ESP32-S3-WROOM uses octal PSRAM
+CONFIG_SPIRAM_MODE_OCT=y
