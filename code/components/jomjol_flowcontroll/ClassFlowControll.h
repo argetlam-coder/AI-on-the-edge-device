@@ -4,6 +4,7 @@
 #define CLASSFLOWCONTROLL_H
 
 #include <string>
+#include <mutex>
 
 #include "ClassFlow.h"
 #include "ClassFlowTakeImage.h"
@@ -43,6 +44,8 @@ protected:
 	void SetInitialParameter(void);	
 	std::string aktstatusWithTime;
 	std::string aktstatus;
+	std::mutex statusMutex;	// status is written by the flow task and read by HTTP handlers
+	void setStatus(const std::string &_status, const std::string &_statusWithTime);
 	int aktRunNr;
 
 public:
@@ -76,8 +79,8 @@ public:
 	bool getIsAutoStart();
 	void setAutoStartInterval(long &_interval);
 
-	std::string* getActStatusWithTime();
-	std::string* getActStatus();
+	std::string getActStatusWithTime();
+	std::string getActStatus();
 	void setActStatus(std::string _aktstatus);
 
 	std::vector<HTMLInfo*> GetAllDigit();
